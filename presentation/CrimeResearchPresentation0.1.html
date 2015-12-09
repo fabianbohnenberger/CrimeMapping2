@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Fabian Bohnenberger">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Spatial Distribution of Crime in Chicago</h2>
+					<h4>Collaborative Research Project</h4>
+					<p>
+						<small> Created by <a href="https://github.com/martinezsebastian/CrimeMapping">Fabian Bohnenberger and Sebastian Martinez</a>                             </small>           
+					</p>
+                
+				</section>
+
+                <section>
+                    <h2>Crime in Chicago</h2>
+                     <img data-src="resources/coverpic.jpg">
+                </section>
+                
+                <section>
+					<h2>Research Aim</h2>
+                    <p>Analyze the relationship between the location of reported crimes and the location and demarcation of police power (police stations and districts)
+                    <br><br><b>Research question: </b><br>
+                        <i>Does the physical location of police stations and the organizational demarcation of police districts have a statistically significant effect on the spatial distribution of crime in the city of Chicago?</i>
+                    </p>
+                </section>
+                
+                <section>
+                    <h2>Data Collection</h2>
+                    <p> Data source is the <a href="https://data.cityofchicago.org">Data Portal of the City of Chicago</a> <br> </p>
+                        <ul>
+                            <li><a href="https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2">Crime Data (2012)</a></li>
+                            <li><a href="https://data.cityofchicago.org/Public-Safety/Boundaries-Police-Districts-current-/fthy-xz3r">Polics District</a> and <a href="https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6">Community Border</a> Data</li>
+                            <li><a href="https://data.cityofchicago.org/Health-Human-Services/Census-Data-Selected-socioeconomic-indicators-in-C/kn9c-c2s2">Socioeconomic (Census) Data</a></li>
+                        </ul>
+                </section>
+                <section>
+                    <section>
+                        <h4>Calculating Police District Centers</h2>
+                        <img width="680" height="630" data-src="resources/policedistricts.png">
+                    </section>
+
+                    <section>
+                        <h4>Community District Borders</h4>
+                        <img width="680" height="630" data-src="resources/communitydistricts.png">
+                    </section>
+                </section>
+                    
+                <section>
+                    <h2>Descriptive Statistics I: <br> The Crime Statistic for 2012</h2>
+                </section>
+                
+ 				<section data-markdown style="font-size:15px">
+					<script type="text/template">
+|   |Crime Types                      |Reported Crimes |
+|:--|:--------------------------------|:---------------|
+|1  |ARSON                            |155             |
+|26 |ROBBERY                          |3791            |
+|28 |STALKING                         |89              |
+|20 |OFFENSE INVOLVING CHILDREN       |669             |
+|2  |ASSAULT                          |5624            |
+|9  |GAMBLING                         |186             |
+|11 |INTERFERENCE WITH PUBLIC OFFICER |381             |
+|4  |BURGLARY                         |8590            |
+|30 |WEAPONS VIOLATION                |722             |
+|16 |NARCOTICS                        |9729            |
+|14 |LIQUOR LAW VIOLATION             |260             |
+|8  |DECEPTIVE PRACTICE               |4976            |
+|3  |BATTERY                          |17762           |
+|25 |PUBLIC PEACE VIOLATION           |800             |
+|22 |OTHER OFFENSE                    |6080            |
+|6  |CRIMINAL DAMAGE                  |12441           |
+|7  |CRIMINAL TRESPASS                |2674            |
+|29 |THEFT                            |31813           |
+|15 |MOTOR VEHICLE THEFT              |6329            |
+|13 |KIDNAPPING                       |100             |
+|10 |HOMICIDE                         |97              |
+|5  |CRIM SEXUAL ASSAULT              |429             |
+|23 |PROSTITUTION                     |610             |
+|12 |INTIMIDATION                     |51              |
+|27 |SEX OFFENSE                      |405             |
+|19 |OBSCENITY                        |12              |
+                    </script>
+                    <small>Reported Crimes in 2012 (crime types)</small>
+                </section>
+                
+                <section>
+                    <section>
+                        <h2>Absolute and Relative Distance</h2>
+                        <p style="text-align:left"><b>Two distances:</b> Crime scene to (1) the calculated district center and (2) the police station<br><br><b>Two ways to express the distance:</b> (1) absolute distance and (2) relative distance, i.e. the distance of the crime to the center/station divided by the max distance (calculated on a district level)</p>
+                    </section>
+                
+                    <section>
+                        <h4>Calculating Police District Centers</h2>
+                        <img width="680" height="630" data-src="resources/policedistricts.png">
+                    </section>
+                </section>
+                
+                <section>
+                    <h2>Descriptive Statistics II: Relative Distance</h2>
+                </section>
+                
+     			<section data-markdown style="font-size:13px">
+				    <script type="text/template">|Crime Types                      |Rel. Distance Center |Crime Types                      |Rel. Distance Station |
+|:--|:--------------------------------|:--------------------|:--------------------------------|:---------------------|
+|17 |NON-CRIMINAL                     |0.1992823            |NON-CRIMINAL                     |0.1797227             |
+|24 |PUBLIC INDECENCY                 |0.2867640            |STALKING                         |0.2642918             |
+|1  |ARSON                            |0.3336800            |KIDNAPPING                       |0.2671208             |
+|26 |ROBBERY                          |0.3395320            |ARSON                            |0.2731567             |
+|28 |STALKING                         |0.3470012            |INTIMIDATION                     |0.2802519             |
+|20 |OFFENSE INVOLVING CHILDREN       |0.3479447            |WEAPONS VIOLATION                |0.2843409             |
+|2  |ASSAULT                          |0.3512491            |PUBLIC INDECENCY                 |0.2859850             |
+|9  |GAMBLING                         |0.3523917            |LIQUOR LAW VIOLATION             |0.2861885             |
+|11 |INTERFERENCE WITH PUBLIC OFFICER |0.3525415            |NARCOTICS                        |0.2870246             |
+|4  |BURGLARY                         |0.3526330            |ROBBERY                          |0.2870849             |
+|30 |WEAPONS VIOLATION                |0.3526452            |DECEPTIVE PRACTICE               |0.2876967             |
+|16 |NARCOTICS                        |0.3532451            |OFFENSE INVOLVING CHILDREN       |0.2879786             |
+|14 |LIQUOR LAW VIOLATION             |0.3532709            |INTERFERENCE WITH PUBLIC OFFICER |0.2885912             |
+|8  |DECEPTIVE PRACTICE               |0.3538001            |ASSAULT                          |0.2901299             |
+|3  |BATTERY                          |0.3555843            |BATTERY                          |0.2915579             |
+|25 |PUBLIC PEACE VIOLATION           |0.3589989            |OTHER OFFENSE                    |0.2928438             |
+|22 |OTHER OFFENSE                    |0.3596853            |BURGLARY                         |0.2940290             |
+|6  |CRIMINAL DAMAGE                  |0.3597468            |CRIMINAL TRESPASS                |0.2940489             |
+|7  |CRIMINAL TRESPASS                |0.3621227            |PUBLIC PEACE VIOLATION           |0.2943171             |
+|29 |THEFT                            |0.3649994            |CRIMINAL DAMAGE                  |0.2953775             |
+|15 |MOTOR VEHICLE THEFT              |0.3652571            |MOTOR VEHICLE THEFT              |0.2990385             |
+|13 |KIDNAPPING                       |0.3661075            |THEFT                            |0.3027394             |
+|21 |OTHER NARCOTIC VIOLATION         |0.3678643            |SEX OFFENSE                      |0.3038116             |
+|10 |HOMICIDE                         |0.3696138            |CRIM SEXUAL ASSAULT              |0.3053200             |
+|5  |CRIM SEXUAL ASSAULT              |0.3708573            |HOMICIDE                         |0.3069019             |
+|23 |PROSTITUTION                     |0.3747230            |PROSTITUTION                     |0.3268022             |
+|12 |INTIMIDATION                     |0.3797288            |OBSCENITY                        |0.3368920             |
+|27 |SEX OFFENSE                      |0.3812722            |GAMBLING                         |0.3391393             |
+|19 |OBSCENITY                        |0.3852943            |NON-CRIMINAL (SUBJECT SPECIFIED) |0.3724863             |
+|18 |NON-CRIMINAL (SUBJECT SPECIFIED) |0.6165038            |OTHER NARCOTIC VIOLATION         |0.4504676             |
+                    </script>
+                </section>
+                                
+                <section>
+                    <section>
+                        <p style="font-size:40px">Relative Distance between Crime Scenes <br>and Calculated <u>District Center</u></p>    
+                    </section>
+                    <section>
+                        <img width="740" height="690" data-src="resources/RelDistAccross.png">
+                    </section>
+
+                    <section>
+                        <img width="740" height="690" data-src="resources/reldistanceind.png">
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <p style="font-size:40px">Relative Distance between Crime Scenes <br>and <u>Police Station</u></p> 
+                    </section>
+                    <section>
+                        <img width="740" height="690" data-src="resources/reldistacrossstation.png">
+                    </section>
+
+                    <section>
+                        <img width="740" height="690" data-src="resources/reldistindstation.png">
+                    </section>
+                </section>        
+                
+                <section>
+                    <h2>Inferential Statistics</h2>
+                </section>
+                
+                <section>
+                    <h2>"Close" and "Far" Crimes Dummy</h2>
+                    <p style="text-align:left">To determine whether the location of the police station has an effect on crime, we create a dummy variable. <br><br> We draw a circle around the police station with a radius of 2/3 the maximum distance. <br><br> All crimes in the circle are considered <b>"Close"</b>, all outside <b>"Far"</b>.</p>
+                </section>
+                
+				<section data-markdown>
+					<script type="text/template">
+                        Establishing Crime Categories
+                        ------------------------
+                        
+                        |Category|Crimes|
+                        |--------|------|
+                        |Violent / Non-Violent|Assault, Battery, Criminal Sexual Assault, Homicide, Kidnapping, Offense Involving Children, Robbery|
+                        |Property / Person|Arson, Burglary, Criminal Damage, Criminal Trespass, Theft, Motor Vehicle Theft|
+                        |Money-related|Prostitution, Narcotics, Theft, Motor Vehicle Theft, Deceptive Practice, Gambling|
+                        |Individual Crime Dummies|All Crimes|
+                    </script>
+                </section>
+                
+                <section>
+                    <h2>Regression: Model 1.1</h2>
+                    <pre><code style="text-align:left">##VIOLENT dummy
+violent_probit1 <- glm(
+    far ~ as.integer(hardship_index) + as.factor(violent), 
+    family=binomial(link="probit"), data=Crime_Data
+    )
+
+## Creating Fitted Values for the Regression 
+fitted <- with(
+    Crime_Data, 
+    data.frame(hardship_index = mean(as.integer(hardship_index)),
+    violent = factor(0:1))
+    ) 
+fitted$predicted <- predict(violent_probit1, newdata = fitted, 
+    type = 'response', interval='confidence'
+    )</code></pre>
+        <small style="text-align:left">This is repeated for PROPERTY and MONEY dummies in model 1.2 and 1.3.</small>
+                </section>
+                
+                                
+                <section style="font-size:18px">
+                    <table style="text-align:center">
+                        <h2><strong>Logistic Regression Estimates of Model 1.1 to 1.3</strong></h2>
+                        <tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="3"><em>Dependent variable:</em></td></tr>
+                        <tr><td></td><td colspan="3" style="border-bottom: 1px solid black"></td></tr>
+                        <tr><td style="text-align:left"></td><td colspan="3">far</td></tr>
+                        <tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td></tr>
+                        <tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Hardship Index</td><td>0.005<sup>***</sup></td><td>0.01<sup>***</sup></td><td>0.005<sup>***</sup></td></tr>
+                        <tr><td style="text-align:left"></td><td>(0.0002)</td><td>(0.0002)</td><td>(0.0002)</td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+                        <tr><td style="text-align:left">Violent Dummy</td><td>-0.06<sup>***</sup></td><td></td><td></td></tr>
+                        <tr><td style="text-align:left"></td><td>(0.01)</td><td></td><td></td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+                        <tr><td style="text-align:left">Property Dummy</td><td></td><td>0.11<sup>***</sup></td><td></td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td>(0.01)</td><td></td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+                        <tr><td style="text-align:left">Money Dummy</td><td></td><td></td><td>-0.04<sup>***</sup></td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td>(0.01)</td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+                        <tr><td style="text-align:left">Constant</td><td>-1.44<sup>***</sup></td><td>-1.52<sup>***</sup></td><td>-1.43<sup>***</sup></td></tr>
+                        <tr><td style="text-align:left"></td><td>(0.01)</td><td>(0.01)</td><td>(0.01)</td></tr>
+                        <tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+                        <tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>114,790</td><td>114,790</td><td>114,790</td></tr>
+                        <tr><td style="text-align:left">Log Likelihood</td><td>-37,239.72</td><td>-37,199.31</td><td>-37,245.33</td></tr>
+                        <tr><td style="text-align:left">Akaike Inf. Crit.</td><td>74,485.44</td><td>74,404.62</td><td>74,496.65</td></tr>
+                        <tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="3" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+                        </table>
+                </section>
+                
+				<section data-markdown style="font-size:27px">
+					<script type="text/template">
+Fitted Values 
+---------------------
+Model 1.1 - Violent
+
+| hardship_index | violent | predicted |
+|:--------------:|:-------:|:---------:|
+|     33.413     |    0    |   0.101   |
+|     33.413     |    1    |   0.091   |
+
+Model 1.2 - Property
+
+| hardship_index | property | predicted |
+|:--------------:|:--------:|:---------:|
+|     33.413     |    0     |   0.089   |
+|     33.413     |    1     |   0.107   |
+
+Model 1.3 - Money
+
+| hardship_index | money | predicted |
+|:--------------:|:-----:|:---------:|
+|     33.413     |   0   |   0.102   |
+|     33.413     |   1   |   0.095   |
+                    </script>
+                </section>
+            
+
+                <section>
+                    <h2>Regression: Model 2.1</h2>
+                    <pre><code style="text-align:left">##VIOLENT dummy
+violent_probit2 <- glm(
+    far ~ as.integer(per_capita_income_) + 
+    as.integer(percent_aged_16_unemployed) +
+    as.integer(percent_households_below_poverty) + 
+    as.integer(percent_aged_25_without_high_school_diploma)+ 
+    as.integer(percent_of_housing_crowded) + 
+    as.integer(percent_aged_under_18_or_over_64) + 
+    as.factor(violent), 
+    family=binomial(link="probit"), data=Crime_Data
+    )
+
+fitted2 <- with(
+    Crime_Data, data.frame(per_capita_income_ =
+        mean(as.integer(per_capita_income_)), 
+    percent_aged_16_unemployed =
+        mean(as.integer(percent_aged_16_unemployed)),
+    percent_households_below_poverty =
+        mean(as.integer(percent_households_below_poverty)),
+    percent_aged_25_without_high_school_diploma =
+        mean(as.integer(percent_aged_25_without_high_school_diploma)),
+    percent_of_housing_crowded =
+        mean(as.integer(percent_of_housing_crowded)),
+    percent_aged_under_18_or_over_64 =
+        mean(as.integer(percent_aged_under_18_or_over_64)), 
+    violent = factor(0:1))
+    )
+fitted2$predicted <- predict(
+    violent_probit2, newdata = fitted2, 
+    type = 'response', interval='confidence'
+    )</code></pre>
+        <small style="text-align:left">This is repeated for PROPERTY and MONEY dummies in model 2.2 and 2.3.</small>
+                </section>             
+                       
+                <section style="font-size:11.5px">
+                    <table style="text-align:center"><caption><h2>Logistic Regression Estimates of Model 2.1 to 2.3</h2></caption>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="3"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="3" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="3">far</td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Per Capita Income</td><td>-0.0000<sup>***</sup></td><td>-0.0000<sup>***</sup></td><td>-0.0000<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.0000)</td><td>(0.0000)</td><td>(0.0000)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged 16+ Unemployed</td><td>-0.13<sup>***</sup></td><td>-0.13<sup>***</sup></td><td>-0.13<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.003)</td><td>(0.003)</td><td>(0.003)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Households below Poverty Line</td><td>-0.03<sup>***</sup></td><td>-0.03<sup>***</sup></td><td>-0.03<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged 25 without High School Diploma</td><td>0.004<sup>**</sup></td><td>0.004<sup>**</sup></td><td>0.004<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.001)</td><td>(0.001)</td><td>(0.001)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent of Housing Crowded</td><td>0.06<sup>***</sup></td><td>0.06<sup>***</sup></td><td>0.06<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.005)</td><td>(0.005)</td><td>(0.005)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged under 18 or over 64</td><td>0.02<sup>***</sup></td><td>0.02<sup>***</sup></td><td>0.02<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Violent Dummy</td><td>-0.08<sup>***</sup></td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td>(0.01)</td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Property Dummy</td><td></td><td>0.06<sup>***</sup></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.01)</td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Money Dummy</td><td></td><td></td><td>0.07<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td>(0.01)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>0.58<sup>***</sup></td><td>0.52<sup>***</sup></td><td>0.54<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.09)</td><td>(0.09)</td><td>(0.09)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>114,790</td><td>114,790</td><td>114,790</td></tr>
+<tr><td style="text-align:left">Log Likelihood</td><td>-31,298.28</td><td>-31,303.78</td><td>-31,296.60</td></tr>
+<tr><td style="text-align:left">Akaike Inf. Crit.</td><td>62,612.57</td><td>62,623.57</td><td>62,609.19</td></tr>
+<tr><td colspan="4" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="3" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>
+                </section>
+                
+                <section data-markdown style="font-size:18px">
+					<script type="text/template">
+Fitted Values 
+---------------------                 
+                    
+Model 2.1 - Violence         
+                    
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Violent | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:-------:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    0    |   0.068   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    1    |   0.058   |
+
+Model 2.2 - Property
+
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Property | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:--------:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    0     |   0.061   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    1     |   0.069   |
+
+Model 2.3 - Money
+
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Money | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:-----:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |   0   |   0.061   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |   1   |   0.071   |
+                    </script>
+                </section>
+        
+        
+                <section style="font-size:11.5px">
+<table style="text-align:center"><caption><h2>Logistic Regression Estimates of Model 3.1 to 3.4</h2></caption>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"></td><td colspan="4"><em>Dependent variable:</em></td></tr>
+<tr><td></td><td colspan="4" style="border-bottom: 1px solid black"></td></tr>
+<tr><td style="text-align:left"></td><td colspan="4">far</td></tr>
+<tr><td style="text-align:left"></td><td>(1)</td><td>(2)</td><td>(3)</td><td>(4)</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Per Capita Income</td><td>-0.0000<sup>***</sup></td><td>-0.0000<sup>***</sup></td><td>-0.0000<sup>***</sup></td><td>-0.0000<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.0000)</td><td>(0.0000)</td><td>(0.0000)</td><td>(0.0000)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged 16+ Unemployed</td><td>-0.13<sup>***</sup></td><td>-0.13<sup>***</sup></td><td>-0.13<sup>***</sup></td><td>-0.13<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.003)</td><td>(0.003)</td><td>(0.003)</td><td>(0.003)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Households below Poverty Line</td><td>-0.03<sup>***</sup></td><td>-0.03<sup>***</sup></td><td>-0.03<sup>***</sup></td><td>-0.03<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged 25 without High School Diploma</td><td>0.004<sup>**</sup></td><td>0.004<sup>**</sup></td><td>0.004<sup>**</sup></td><td>0.004<sup>**</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.001)</td><td>(0.001)</td><td>(0.001)</td><td>(0.001)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent of Housing Crowded</td><td>0.06<sup>***</sup></td><td>0.06<sup>***</sup></td><td>0.06<sup>***</sup></td><td>0.06<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.005)</td><td>(0.005)</td><td>(0.005)</td><td>(0.005)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Percent Aged under 18 or over 64</td><td>0.02<sup>***</sup></td><td>0.02<sup>***</sup></td><td>0.02<sup>***</sup></td><td>0.02<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td><td>(0.002)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Prostitution Dummy</td><td>0.31<sup>***</sup></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td>(0.08)</td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Narcotics Dummy</td><td></td><td>-0.01</td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td>(0.02)</td><td></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Gambling Dummy</td><td></td><td></td><td>0.34<sup>*</sup></td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td>(0.19)</td><td></td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Arson Dummy</td><td></td><td></td><td></td><td>-0.22</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td>(0.15)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td style="text-align:left">Constant</td><td>0.57<sup>***</sup></td><td>0.56<sup>***</sup></td><td>0.57<sup>***</sup></td><td>0.56<sup>***</sup></td></tr>
+<tr><td style="text-align:left"></td><td>(0.09)</td><td>(0.09)</td><td>(0.09)</td><td>(0.09)</td></tr>
+<tr><td style="text-align:left"></td><td></td><td></td><td></td><td></td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left">Observations</td><td>114,790</td><td>114,790</td><td>114,790</td><td>114,790</td></tr>
+<tr><td style="text-align:left">Log Likelihood</td><td>-31,311.64</td><td>-31,317.83</td><td>-31,316.51</td><td>-31,316.79</td></tr>
+<tr><td style="text-align:left">Akaike Inf. Crit.</td><td>62,639.28</td><td>62,651.66</td><td>62,649.03</td><td>62,649.57</td></tr>
+<tr><td colspan="5" style="border-bottom: 1px solid black"></td></tr><tr><td style="text-align:left"><em>Note:</em></td><td colspan="4" style="text-align:right"><sup>*</sup>p<0.1; <sup>**</sup>p<0.05; <sup>***</sup>p<0.01</td></tr>
+</table>
+                </section>
+       
+                <section data-markdown style="font-size:18px">
+					<script type="text/template">
+Fitted Values
+-----------
+
+Model 3.1 - Prostitution
+
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Prostitution | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:------------:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |      0       |   0.065   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |      1       |   0.115   |
+
+Model 3.3 - Narcotics
+
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Narcotics | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:---------:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |     0     |   0.066   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |     1     |   0.065   |
+
+Model 3.2 - Gambling 
+
+| PerCapitaIncome | 16+Unemployed% | HouseholdsPoverty% | 25+WithoutHighSchool% | HousingCrowded% | Under18Over64% | Gambling | predicted |
+|:---------------:|:--------------:|:------------------:|:---------------------:|:---------------:|:--------------:|:--------:|:---------:|
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    0     |   0.066   |
+|    36813.91     |     10.886     |       16.548       |         16.01         |      4.108      |     29.365     |    1     |   0.120   |
+
+
+
+                    </script>
+                </section>
+
+                <section>
+                    <img width="680" height="630" data-src="resources/mapprostgambl.png">
+                </section>
+
+                <section>
+                    <h2>Next Steps</h2>
+                    <ul>
+                        <li>Solve issue with Zelig package</li>
+                        <li>Regression for individual districts/groups of adjacent districts</li>
+                    </ul>
+                </section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+    
+	</body>
+</html>
