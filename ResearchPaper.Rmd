@@ -48,11 +48,7 @@ library(stargazer)
 
 ## Summary 
 
-This research project shows the relationship between the spatial distribution of crimes and the allocation and demarcation of police power in the city of Chicago.
-
-
-The motivation for this research stems from the way a city is divided into organizational districts, invisible to pedestrians, but potentially limiting in the way police can effectively carry out their duty. 
-...
+Based on observations of reported crimes, the location of police stations and the organizational demarcation of police power in the city of Chicago, this paper analyses the spatial distribution of crime. We pose the question whether crime occurs primarily farther away from the police station and whether the borders of police districts have a statistically significant effect on the distribution of crime. Our motivation for this research stems from the way a city is divided into organizational districts, invisible to citizens, but potentially limiting in the way police can effectively carry out their duty. Our model shows that there are only few crimes that are clustered farther away from police stations. In fact, for most crimes neither the police district borders nor the location of  police stations seem to be a substantial determinant. However, we think the model provides a good overview of the occurence of crime in the city of Chicago and identifies interesting patterns in the distribution of crime. Especially the results regarding the role of gambling and prostitution crimes are noteworthy. We also present the results for other crime types and establish categories based on violent crime, crimes directed at property and crimes with a significant monetary incentive. 
 
 
 ## Introduction 
@@ -515,7 +511,7 @@ curve(dnorm(x, mean=mean(reldistindsta), sd=sd(reldistindsta)), add=TRUE, col="d
 SelectedCrimeFigure4 <- subset(agg_crime_type, District == "1")
 
 reldistind <- as.numeric(SelectedCrimeFigure4$rel_dist)
-hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+hist(reldistind, freq=FALSE, main ="Relative Distance for District 1")
 curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
 ```
 
@@ -524,19 +520,20 @@ curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblu
 SelectedCrimeFigure5 <- subset(agg_crime_type, District == "8")
 
 reldistind <- as.numeric(SelectedCrimeFigure5$rel_dist)
-hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+hist(reldistind, freq=FALSE, main ="Relative Distance for District 8")
 curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
 ```
+
+These examples thus show that the average relative distance for the crime types actually differs across districts. Figure 10 shows a particularly broad distribution.
 
 **Figure 10 - Average Relative Distances for District 20**
 ```{r, echo=FALSE}
 SelectedCrimeFigure6 <- subset(agg_crime_type, District == "20")
 
 reldistind <- as.numeric(SelectedCrimeFigure6$rel_dist)
-hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+hist(reldistind, freq=FALSE, main ="Relative Distance for District 20")
 curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
 ```
-
 
 ### Crime Distribution 
 
@@ -617,7 +614,6 @@ SelectedCrimesData3 <- subset(Crime_Data, Primary.Type == "SEX OFFENSE" | Primar
 FinalMap <- ChicagoMap +
                 geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
                 data = SelectedCrimesData3) +
-                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
                 xlab('') + ylab('') +
                 theme(axis.ticks = element_blank(), 
                       axis.text.x = element_blank(),
@@ -654,8 +650,7 @@ print(FinalMap)
 
 ### Splitting Crimes in Close and Far 
 
-To determine whether the location of the police station has an effect on crime, we first create a dummy variable that distinguishes crimes that are perpetrated close to a police station from crimes that were reported farther away. We create a circle with the police station at its center for each district. The radius of the circle is 2/3 the maximal distance, which is determined by the farthest away crime in each district. We chose 2/3 because halfing the distance would have covered an insufficient area around the police station in comparison to the area of the district. All crimes that are reported inside this circle are considered "close", those outside the circle are labled "Far".
-
+To determine whether the location of the police station has an effect on crime, we first create a dummy variable that distinguishes crimes that are perpetrated close to a police station from crimes that were reported farther away. This approach addresses both research hypotheses that we outlined above. We create a circle with the police station at its center for each district. The radius of the circle is 2/3 the maximal distance, which is determined by the farthest away crime in each district. We chose 2/3 because taking half of the maximum distance would have covered an insufficient area around the police station in comparison to the total area of the district. All crimes that are reported inside this circle are considered "Close", those outside the circle are labled "Far".
 
 ```{r Close and Far Crimes Dummy, echo=FALSE}
 
@@ -672,7 +667,7 @@ Crime_Data$far <- ifelse(Crime_Data$distance>=Crime_Data$half_distance,1,0)
 
 ### Establishing crime categories 
 
-To compare the effects of the location of the police station on different types of crime, we create different groups of crimes from our data. Although we cannot be sure that all observations represent the group criteria to the fullest degree (e.g. all crimes in the category "violent" necessarily included the application of violence), the categories were created based on widely-used classifications of crime, including the [International Classification of Crime for Statistical Purposes](https://www.unodc.org/documents/data-and-analysis/statistics/crime/ICCS/ICCS_Draft_for_consultation_August_2014.pdf) developed by the United Nations Office of Drugs and Crime and the Chicago Police Department - Illinois Uniform Crime Reporting (IUCR) codes. 
+To compare the effects of the location of the police station on different types of crime, we create different groups of crimes from our data. Although we cannot be sure that all observations represent the group criteria to the fullest degree (e.g. all crimes in the category "violent" necessarily included the application of violence), the categories were created based on widely-used classifications of crime, including the [International Classification of Crime for Statistical Purposes](https://www.unodc.org/documents/data-and-analysis/statistics/crime/ICCS/ICCS_Draft_for_consultation_August_2014.pdf) developed by the United Nations Office of Drugs and Crime and, as a second source, the Chicago Police Department - Illinois Uniform Crime Reporting (IUCR) codes. 
 
 ```{r, echo=FALSE}
 
@@ -702,9 +697,6 @@ First, we distinguish between violent and non-violent crime. Based on our data f
 
 Crime_Data$violent <- ifelse(Crime_Data$Primary.Type=="ASSAULT" | Crime_Data$Primary.Type=="BATTERY" | Crime_Data$Primary.Type=="CRIM SEXUAL ASSAULT" | Crime_Data$Primary.Type=="HOMICIDE" | Crime_Data$Primary.Type=="KIDNAPPING" | Crime_Data$Primary.Type=="OFFENSE INVOLVING CHILDREN" | Crime_Data$Primary.Type=="ROBBERY", 1,0)
 
-
-## EXCLUDED INtimidation (!) and sex offense  (!)####################################
-
 ```
 
 #### Persons/Property
@@ -731,7 +723,7 @@ Crime_Data$property <- ifelse(Crime_Data$Primary.Type=="ARSON" | Crime_Data$Prim
 
 #### Money/Non-money
 
-Third, we differentiate whether there is a significant monetary incentive involved in perpetrating the crime. This is, of course, difficult to ascertain on a type basis. We, however, focus on these crimes where money represents a significant motivation, e.g. in narcotics trade. 
+Third, we differentiate whether there is a significant monetary incentive involved in perpetrating the crime. This is, of course, difficult to ascertain on the basis of crime types. We, however, focus on crime types where money represents a significant motivation, e.g. in prostitution. 
 
 | Crime Type | Description |
 |------------|-------------|
@@ -755,6 +747,8 @@ Crime_Data$money <- ifelse(Crime_Data$Primary.Type=="PROSTITUTION" | Crime_Data$
 
 #### Creating individual crime dummies 
 
+In addition, we also create additional dummies for individual crime types. These will be used to test whether specific crimes are are reported more often at the district borders than closer to the district center/the polics station. 
+
 ```{r Creating Prostitution Dummy, echo=FALSE}
 
 ##creating a dummy variable for money component (money-related = 1)
@@ -767,27 +761,20 @@ Crime_Data$Gambling <- ifelse(Crime_Data$Primary.Type=="GAMBLING", 1,0)
 
 Crime_Data$Arson <- ifelse(Crime_Data$Primary.Type=="ARSON", 1,0)
 
-
-
 ```
-
-
-
 
 
 ### Regression 
 
 We rely on a regression in order to test whether the location of the police station and the delineation of police districts in the city has an effect on the spatial distribution of crime in Chicago. 
 
-Our dependent variable is the occurence of specific crimes. First, we will rely on the categories established above and test whether the location of police stations and district borders has a statistically significant effect on the location of crimes. Second, we  will look at individual crimes. 
+Our dependent variable is the occurence of specific crimes. First, we will rely on the categories established above and test whether the location of police stations and district borders has a statistically significant effect on the spatial distribution of crime categories. Second, we  will look at the occurence of crime types and individual crimes.
 
-Independent variables are the distance to the main district police station as well as the distance to the police district borders. 
-
-For the regression, we have to control for the specific characteristics of the police districts in question that affect crime. Economic and demographic factors in each city area must be considered. The Data Portal of the City of Chicago includes Census data that is aggregated on the community level which allows us to control for a number of socioeconomic effects on crime. We especially rely on the so-called "hardship index" that represents a weighted index of six socioeconomic variables (percent of housing crowded, percent households below poverty line, percentage aged 16+ unemployed, percentage aged 25+ without highschool diploma, percentage aged under 18 or over 64, per capita income).  
+Independent variables are the distance to the main district police station as well as the distance to the police district borders. In addition, we have to control for the specific characteristics of the police districts in question that affect crime. Economic and demographic factors in each city area must be considered. The Data Portal of the City of Chicago includes Census data that is aggregated on the community level which allows us to control for a number of socioeconomic effects on crime. We especially rely on the so-called "hardship index" that represents a weighted index of six socioeconomic variables (percent of housing crowded, percent households below poverty line, percentage aged 16+ unemployed, percentage aged 25+ without highschool diploma, percentage aged under 18 or over 64, per capita income).  
 
 #### Model 1.1 - Probability of Violent Crimes occuring Far Away from the Police Station  
 
-This model calculates the probability of a crime occuring far away from the police station depending on it being a violent crime. The dependent variable is our dummy variable "far", which distinguishes between crimes that are committed inside and outside the circle drawn around the police station. To explain the variation in the dependent variable, this model includes the hardship index, which covers six socioeconomic indicators, and our dummy variable violent, which determines whether the crime included the application of violence, as dependent variables. 
+This model calculates the probability of a crime occuring far away from the police station depending on it being a violent crime. The dependent variable is our dummy variable "Far", which distinguishes between crimes that are committed inside and outside the circle drawn around the police station. To explain the variation in the dependent variable, this model includes the hardship index, which covers six socioeconomic indicators, and our dummy variable violent, which determines whether the crime included the application of violence, as dependent variables. For a summary of the results, please see **Table 3** and the tables containing fitted values. 
 
 ```{r violent_probit1, echo=FALSE}
 
@@ -801,6 +788,8 @@ fitted11$predicted <- predict(violent_probit1, newdata = fitted11, type = 'respo
 kable(fitted11, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values')
 
 ```
+
+For each Model, fitted values are created. This is necessary because the calculated coefficients in Probit models do not represent the marginal effects of a change in the independent variable on the dependent variable. To create the fitted values, we use the mean of the hardship index. As a result, we can show the effect that a crime being violent or non-violent - according to our definition presented above - has on its probability of being perpetrated/reported inside our outside of the circle around the police station. This gives us an indication of whether violent crimes are primarily perpetrated closer or farther away from the police station, i.e. whether the police station has an effect on crime. 
 
 #### Model 1.2 - Probability of Crimes directed at Property occuring Far Away from the Police Station 
 
@@ -830,9 +819,11 @@ kable(fitted13, align = 'c', digits = 3, caption = 'Predicted Probabilities for 
 
 ```
 
+As the fitted values show, the model does not predict huge differences in the probability of a crime falling inside or outside of the circle depending on it being violent or property-related. This allows different interpretations. First, or independent variables may not have huge explanatory potential with regard to the spatial distribution of crime. Second, our crime categories could be too broad, averaging out any differences that might be present. Third, there might not be any significant differences in the occurence of crime because the police districts are quite homogenous and crimes are distributed without distinct patterns. To test these assumptions, we conduct a number of follow-up Probit models.   
+
 #### Summary Model 1 
 
-**Table 3** shows ... 
+**Table 3** shows that most of the coefficients in the regression are highly statistically significant. This is also related to the high nubmer of observations in this model, which can create the effect of statistically signifant but substantially insignificant coefficients. Because the interpretation of coefficients in Probit models is difficult, we primarily rely on fitted values. 
 
 **Table 3***
 ```{r Stargazer Table 1, echo=FALSE, results='asis'}
@@ -859,10 +850,11 @@ stargazer::stargazer(fitted11, fitted12, fitted13, covariate.labels = labelsfitt
 ```
 
 
+  
+  
 #### Model 2.1 - Socioeconomic indicators and Violent Crime as Predictors for the Distribution of Crime 
 
-The second model substitutes the "hardship index" for its individual components and ... 
-
+The second model addresses our concern with regard to the low explanatory value of our independent variables and substitutes the "hardship index" for its individual components, which includes a broader set of socioeconomic control variabels. In a next step, we will also reduce the number of crimes we are looking at by focusing on individual crime types instead of the categories established above. 
 
 ```{r violent_probit2, echo=FALSE}
 
@@ -877,7 +869,6 @@ coltable3 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+With
 kable(fitted2, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable3)
 
 ```
-
 
 #### Model 2.2 - Socioeconomic Indicators and Crimes directed at Property
 
@@ -913,6 +904,7 @@ kable(fitted2, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 
 ```
 
+As we can see from the fitted values above, the inclusion of a more distributed set of control variables did not change our results significantly and the explanatory power remains low. In a next step, we therefore substitute individual crime dummies for our categories of crimes. 
 
 #### Summary Model 2
 
@@ -931,6 +923,8 @@ stargazer::stargazer(violent_probit2, property_probit2, money_probit2, covariate
 
 ### Model 3 - Analysis for Individual Crimes
 
+In this model, we focus on indidvidual crime types. This provides better results as the previous regressions. The predicted probabilities remain, however, relatively low. It is noteworthy that the differences in predicted probabilities are more significant for particular crimes, most notably prostitution and gambling. For other crime types, we do also see some effects depending on the degree crimes are clustered in specific locations that fall outside of the circle around the police station or not. A few examples are presented below. 
+
 #### Spatial Distribution: Prostitution Crime
 
 ```{r Prostitution_probit3, echo=FALSE}
@@ -946,7 +940,9 @@ kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 
 ```
 
-The significant difference in predicted probabilities for prositution crime indicates a spatial distribution of this crime type that is different from other crimes. **Figure x** shows that prostitution crimes are indeed clustered in around specific locations. 
+The more significant difference in predicted probabilities for prositution crime indicates a spatial distribution of this crime type that is different from others. **Map 8** shows that prostitution and gambling crimes are indeed clustered in around specific locations. The same effects can be measured for other crimes - although to a lesser degree -, see the section presenting the spatial distribution of crime types above for more details. 
+
+**Map 8 - Spatial Distribution of PROSTITUTION and GAMBLING crimes**
 
 ```{r Map Prostitution & Gambling crime, echo=FALSE, warnings = FALSE, error=FALSE, eval=FALSE}
 ## Clustered crimes 
@@ -1027,10 +1023,14 @@ kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 Arson_probit3 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(Arson), family=binomial(link="probit"), data=Crime_Data)
 
 fitted3 <- with(Crime_Data, data.frame(per_capita_income_=mean(as.integer(per_capita_income_)), percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)), percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)), percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)), percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)), percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), Arson = factor(0:1)))
+
+coltable9 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Arson', 'predicted')
 fitted3$predicted <- predict(Arson_probit3, newdata = fitted3, type = 'response', interval='confidence')
-kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values')
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable9)
 
 ```
+
+These examples show that some crimes might, in fact, be clustered farther away from the police station. This would be logical especially for crimes that involve a certain amount of planning and are not spontaneous crimes or "crimes of passion". In this regard, we would also assume that they are more often related to money than other crimes. However, as our previous models have shown, this may not necessarily be the case. As we acknowledged before, our category "money-related" may not exclusively contain crimes that are motivated primarily by monetary factors. With other crimes, the distribution seems again relatively random - which could mean that the police districts are too small to show significant changes in the spatial distribution of crime as a function of the distance to the police station or district border. 
 
 #### Summary Model 3 
 
@@ -1045,7 +1045,6 @@ stargazer::stargazer(Prostitution_probit3, Narcotics_probit3, Gambling_probit3, 
     digits = 2, type = 'html')
 
 ```
-
 
 
 ### Model 4 
@@ -1074,6 +1073,9 @@ fitted41 <- with(Crime_DataWithoutClusters, data.frame(
 
 fitted41$predicted <- predict(Violent_probit4, newdata = fitted41, type = 'response', interval='confidence')
 
+coltable10 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Violent', 'predicted')
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable10)
+
 ##PROPERTY
 
 Property_probit4 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(property), family=binomial(link="probit"), data=Crime_DataWithoutClusters)
@@ -1089,6 +1091,9 @@ fitted42 <- with(Crime_DataWithoutClusters, data.frame(
   )
 
 fitted42$predicted <- predict(Property_probit4, newdata = fitted42, type = 'response', interval='confidence')
+
+coltable11 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Property', 'predicted')
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable11)
 
 
 ##MONEY
@@ -1106,8 +1111,13 @@ fitted43 <- with(Crime_DataWithoutClusters, data.frame(
   )
 
 fitted43$predicted <- predict(Money_probit4, newdata = fitted43, type = 'response', interval='confidence')
+
+coltable12 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Property', 'predicted')
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable12)
+
 ```
 
+As expected, excluding clustered crimes does not affect the model significantly. This can both be explained with the relatively low numer of cases in the model that seem significantly clustered and the low explanatory power of the model. Overall, this indicates that the distance to the nearest police station and the distance to the border of the  police district are not highly significant in determining the location of crime in Chicago. Again, we assume that our unit of obserrvation, police districts, may be too small to account correctly for the spatial distribution of crime as a function of the organizational demarcation of police power. 
 
 ```{r ClusteredDataProbit Stargazer, echo=FALSE, results='asis'}
 ## Create covariate labels
@@ -1137,7 +1147,7 @@ Money_linear1 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(money)
 
 ```
 
-...
+For this model, we do not need to rely on fitted values. Instead, the coefficients represent marginal effects. We first include our crime category dummies. 
 
 ```{r Linear Models Stargazer, echo=FALSE, results='asis'}
 ## Create covariate labels
@@ -1150,7 +1160,38 @@ stargazer::stargazer(Violent_linear1, Property_linear1, Money_linear1, covariate
 
 ```
 
+Given the high value of the intercept/constant (over 8000), the effect of a crime possessing the characteristics expressed by our categories on its distance from the police station remains relatively small. Notice also that the effect of the Property Dummy is not statistically significant. For the other two categories, the model indicates that violent and money related crimes tend to occur slightly closer to the police station. In interpreting these effects, we have, however, to be clear that we are talking about absolute distance, which can easily be biased by one large police district. Indeed, we assume this is the case here. Most police districts, especially those in the city center, are relatively small while a number of bigger districts exist at the city border. We conduct the same regressions for the relative distance in a next step. 
+
+
+```{r Linear Regression Relative Distance, echo=FALSE}
+
+## Linear Models with Relative Distances 
+
+Violent_linear2 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(violent), data=Crime_Data )
+
+Property_linear2 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(property), data=Crime_Data )
+
+Money_linear2 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(money), data=Crime_Data )
+
+```
+
+```{r Linear Models Stargazer Rel Dist, echo=FALSE, results='asis'}
+## Create covariate labels
+labelsLinear1 <- c('Hardship Index', 'Violent Dummy', 'Property Dummy', 'Money Dummy')
+
+##Using stargazer, we create a table that summarizes the results of the Models 5.1 to 5.3. 
+stargazer::stargazer(Violent_linear2, Property_linear2, Money_linear2, covariate.labels = labelsLinear1,
+    title = 'Linear Regression Estimates of Model 5.4 to 5.6',
+    digits = 2, type = 'html')
+
+```
+
+As presented in this table, the effects are indeed much less significant as the look at the absolute distance suggested. Because the relative distance accounts for the bias through different distrct sizes, we receive a more balanced picture in these regressions.
+
+
 ### Model 6 - Linear Regression Model: Absolute Distances for Individual Crimes 
+
+In out last model, we analyse whether specific crimes occur closer or farther away from the police station than the average. We especially look at crimes which we identified previoulsy as clustered.  
 
 ```{r Linear Regression Absolute Distance Ind. Crimes, echo=FALSE}
 
@@ -1160,27 +1201,54 @@ Prostitution_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor
 
 Gambling_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Gambling), data=Crime_Data )
 
-```
+Narcotics_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Narcotics), data=Crime_Data )
 
-...
+Arson_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Arson), data=Crime_Data )
+
+```
 
 ```{r Linear Models Stargazer Ind. Files, echo=FALSE, results='asis'}
 ## Create covariate labels
-labelsLinear2 <- c('Hardship Index', 'Prostitution Dummy', 'Gambling Dummy')
+labelsLinear2 <- c('Hardship Index', 'Prostitution Dummy', 'Gambling Dummy', 'Narcotics Dummy', 'Arson Dummy')
 
-##Using stargazer, we create a table that summarizes the results of the Models 6.1 to 6.3. 
-stargazer::stargazer(Prostitution_linear2, Gambling_linear2, covariate.labels = labelsLinear2,
-    title = 'Linear Regression Estimates of Model 6.1 to 6.3',
+##Using stargazer, we create a table that summarizes the results of the Models 6.1 to 6.4. 
+stargazer::stargazer(Prostitution_linear2, Gambling_linear2, Narcotics_linear2, Arson_linear2, covariate.labels = labelsLinear2,
+    title = 'Linear Regression Estimates of Model 6.1 to 6.4',
+    digits = 2, type = 'html')
+
+```
+
+Again, while the regression for the absolute distances (above) show substantial effects, especially for gambling, the coefficients in the regressions including relative distances (below) are smaller. Again, this indicates a potential bias by different district sizes. It is noteworthy, however, that the coefficients for individual crime types are higher than the results in Model 5 for crime categories. In this regard, we see some small but statistically significant effects of certain crime types in their spatial distribution. 
+
+```{r Linear Regression Relative Distance Ind. Crimes, echo=FALSE}
+
+## Linear Reg for individual Crimes 
+
+Prostitution_linear3 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(Prostitution), data=Crime_Data )
+
+Gambling_linear3 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(Gambling), data=Crime_Data )
+
+Narcotics_linear3 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(Narcotics), data=Crime_Data )
+
+Arson_linear3 <- lm(rel_dist_sta ~ as.integer(hardship_index) + as.factor(Arson), data=Crime_Data )
+
+```
+
+```{r Linear Models Stargazer Ind. Crimes Rel, echo=FALSE, results='asis'}
+## Create covariate labels
+labelsLinear2 <- c('Hardship Index', 'Prostitution Dummy', 'Gambling Dummy', 'Narcotics Dummy', 'Arson Dummy')
+
+##Using stargazer, we create a table that summarizes the results of the Models 6.4 to 6.8. 
+stargazer::stargazer(Prostitution_linear3, Gambling_linear3, Narcotics_linear3, Arson_linear3, covariate.labels = labelsLinear2,
+    title = 'Linear Regression Estimates of Model 6.4 to 6.8',
     digits = 2, type = 'html')
 
 ```
 
 
-
-
 ## Conclusion 
 
-...
+Based on observations of reported crimes, the location of police stations and the organizational demarcation of police power in the city of Chicago we tried to assess the spatial distribution of crime. We posed the question whether crime occurs primarily farther away from the police station and whether the borders of police districts have a statistically significant effect on the distribution of crime. Our model shows that there are only few crimes that are clustered farther away from police stations. In fact, for most crimes neither the police district borders nor the location of  police stations seem to be a substantial determinant of their spatial distribution. Our unit of observation might be too small to observe significant differences in the occurence of crime. The assumption that crime would move specifically to the borders of police districts or away from the police station could not be confirmed for most crimes. However, we think the model provides a good overview of the occurence of crime in the city of Chicago and identifies some interesting patterns in the distribution of crime. Especially the results regarding the role of gambling and prostitution crime are noteworthy. We assume that more data on the presence of police is needed to establish a reliable model on the effects of police power on the spatial distribution of crime. We think that data on patrol routes, times and perception of police presence by citizens would be required to measure the impact more accurately. 
 
 
 ## Bibliography 
