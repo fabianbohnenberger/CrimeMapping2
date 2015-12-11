@@ -34,7 +34,7 @@ library(knitr)
 library(maptools)
 library(ggmap)
 library(ggplot2)
-
+library(stargazer)
 
 ```
 
@@ -85,9 +85,7 @@ The proposed research questions are connected to the following hypotheses:
 
 **Hyptohesis 1**: The farther away from the police station, the more crimes are committed. 
 
-**Hypothesis 2**: An overall rising number of crimes means crime moves closer to the police station. 
-
-**Hypothesis 3**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
+**Hypothesis 2**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
 
 ## Methodology
 The proposed methodology is to run a regression using the *relative* position of a crime against the specific characteristics of the police district and the type of crime as independent variables. The idea behind this is that depending on the active presence of police in a district, criminals might have incentives to move further away from the places where the police have a more sound presence. In other words, this research is trying to explain the development of crime hotspots in relation to the organizational distribution of responsibility to specific police forces in a city. The data sources, as well as the necessary transformations are described in this chapter. 
@@ -159,9 +157,9 @@ stations_ <- readShapePoints("RSourceFiles/PoliceStationsDec2012.shp")
 stations = as.data.frame(stations_)
 ```
 
-**Figure 1** shows a plot with the map of Chicago. It is divided into Police Districts, the centroids of every district are presented in circles. The locations of all the police stations is presented in triangles. 
+**Map 1** shows a plot with the map of Chicago. It is divided into Police Districts, the centroids of every district are presented in circles. The locations of all the police stations is presented in triangles. 
 
-**Figure 1**
+**Map 1**
 
 ```{r Plot Police Districts and Stations, echo=FALSE}
 
@@ -186,9 +184,9 @@ commareas <- readShapePoly("RSourceFiles/CommAreas.shp")
 CommAreasCentroids <- as.data.frame(gCentroid(commareas,byid=TRUE))
 ```
 
-Second, we have to compare the police districts with the delineation of "communities" in Chicago. This is important because the socioeconomic data that will be used in our regression is based on this aggregation level. As **Figure 2** shows, the Community Districts are different from the Police Districts. The figure also includes the respective community districts. We will therefore have to be careful in our following analysis to link each crime with the relevant socioeconomic information depending on in which community, not police district, it is committed. 
+Second, we have to compare the police districts with the delineation of "communities" in Chicago. This is important because the socioeconomic data that will be used in our regression is based on this aggregation level. As **Map 2** shows, the Community Districts are different from the Police Districts. The figure also includes the respective community districts. We will therefore have to be careful in our following analysis to link each crime with the relevant socioeconomic information depending on in which community, not police district, it is committed. 
 
-**Figure 2**
+**Map 2**
 
 ```{r, echo=FALSE}
 
@@ -260,11 +258,9 @@ total <- total[!(is.na(total$distance)),]
 total <- total[!(is.na(total$distance_sta)),]
 
 
-#
+#Establishing two counters for loops (Strangely, one loop does not cover all districts.)
 total_1 <- total[(total$District<=10),] 
 total_2 <- total[(total$District>10),] 
-
-
 
 counter_1 <- aggregate(count ~ District, data = total_1, FUN=mean)
 counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
@@ -294,7 +290,7 @@ for(i in counter_1$District)
 {
   print(i)
   nam <- paste("District", i, sep = "")
-  print(nam)
+  #print(nam)
   temp <- district_list[[nam]]
   temp$max_distance <- max(abs(temp$distance))
   temp$max_distance_sta <- max(abs(temp$distance_sta))
@@ -318,7 +314,7 @@ for(i in counter_2$District)
 {
   print(i)
   nam <- paste("District", i, sep = "")
-  print(nam)
+  #print(nam)
   temp <- district_list_2[[nam]]
   temp$max_distance <- max(abs(temp$distance))
   temp$max_distance_sta <- max(abs(temp$distance_sta))
@@ -434,7 +430,7 @@ However, this aggregated level clearly does not allow for much variation in the 
 
 As **Figure 3** shows, the relative distance for crime types across all districts is not significantly distributed to make inferences about the occurence of specific crimes. We need to look at more disaggregated data to find differences in the spatial distribution of crime. 
 
-**Figure 3 - Relative Distance between Crime Types and District Center across Police Districts**
+**Figure 3 - Relative Distance between Crime Types and District Center across Police Districts**  
 ```{r, echo=FALSE}
 
 reldist <- as.numeric(agg_crime$rel_dist)
@@ -454,38 +450,122 @@ curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblu
 
 ```
 
+### Crime Distribution 
 
-**Figure 5 - Example District**
+**Map 3** provides an overview of the distribution of crimes across the city of Chicago. The map shows that there are few areas where no crimes are committed. It is also noteworthy that the number of dots representing crimes on the map does not decrease substantially towards the City borders. In that regard, **Map 3** suggests that these borders might not have any statistically significant effect on the spatial distribution of crime. However, it might also indicate that crime moves towards the these borders because the police presence might be lower at the margins of the Police districts. 
+ 
+**Map 3 - All Crimes in Chicago 2012**  
 
-```{r, echo=FALSE}
+```{r Map All Crimes, echo=FALSE, warnings = FALSE, error=FALSE, results='hide'}
 
-exampledist <- as.numeric(agg_crime_type$rel_dist)
-hist(exampledist, freq=TRUE, main ="Relative Distance for individual Police Districts")
-curve(dnorm(x, mean=mean(exampledist), sd=sd(exampledist)), add=TRUE, col="darkblue", lwd=2) 
+ChicagoMap <- qmap("Chicago", zoom = 10, maptype = "toner", source = "stamen")
 
-## change to show rel. distance in one or two representative sectors (!) + table 
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = Crime_Data) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
 
 ```
 
+**Map 4** shows the spatial distribution of the most common crimes, theft and battery, in Chicago. The map indicates that these crimes are in fact relatively evenly distributed across the city because there are no real clusters or specific patterns visible. 
 
-#Here more disaggregated description of data (example districts?,bar graphs??)
+**Map 4 - Distribution of Specific Crimes 1**  
 
+```{r Map Most Common Crimes, echo=FALSE, warnings = FALSE, error=FALSE}
 
+SelectedCrimesData1 <- subset(Crime_Data, Primary.Type == "THEFT" | Primary.Type == "BATTERY" )
 
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData1) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
 
+**Map 5** and **Map 6** indicate that other crimes might be distributed more unevenly. This can, for example be shown with Weapons Violations and Public Peace Violations. These seem to be more clustered in specific areas, which also seem to be the districts with the highest population density. Interestingly, they also seem to occur less often at the City border than in the inner city. 
+
+**Map 5 - Distribution of Specific Crimes 2**  
+
+```{r Map Violations, echo=FALSE, warnings = FALSE, error=FALSE}
+
+SelectedCrimesData2 <- subset(Crime_Data, Primary.Type == "PUBLIC PEACE VIOLATION" | Primary.Type == "WEAPONS VIOLATION" )
+
+ChicagoMap <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData2) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+**Map 6** shows that some crimes are even more clustered. This relates especially to gambling and prostitution crimes that seem to be located at fewer locations. Prostitution seems to occur primarily along certain streets, while gambling remains concentrated in specific districts. In comparison, sex offenses are not that clustered. The same is true for narcotics related crimes. (Not included in this Map for clarity.)
+
+**Map 6 - Distribution of Specific Crimes 3**  
+
+```{r Map Clustered Crimes, echo=FALSE, warnings = FALSE, error=FALSE}
+
+SelectedCrimesData3 <- subset(Crime_Data, Primary.Type == "SEX OFFENSE" | Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData3) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+**Map 7** shows the distribution for three other felony crimes with relatively few observations (Homicide: 97, Kidnapping: 100, Arson: 155) in comparison to other crimes like burglary and theft. Again, we do not really see specific clusters of these crimes. 
+
+**Map 7 - Distribution of Specific Crimes 4**  
+
+```{r Map Specific Felonies, echo=FALSE, warnings = FALSE, error=FALSE}
+
+SelectedCrimesData4 <- subset(Crime_Data, Primary.Type == "HOMICIDE" | Primary.Type == "ARSON" | Primary.Type == "KIDNAPPING")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData4) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
 
 
 ### Evaluation of relative distance variable 
 
 This secction evaluates wheter our caluclation of *relative* distances of certain crimes to the crime farthest away per district adds value to our statistical analysis. 
 
-
-
-# Add a few graphs for rel. distance / abs. distance for specific crime types (!) / crime categories as developed belwo
-
-
-
-Figure 5 and Figure 6 show the same distributions as Figure 3 and Figure 4, but using the distance to the Police Station as center point. 
+Figure 5 and Figure 6 show the same distributions as Figure 3 and Figure 4, but use the distance to the Police Station as the center point. 
 
 **Figure 5 - Relative Distance between Crime Types and District Center across Police Districts**
 ```{r, echo=FALSE}
@@ -524,10 +604,6 @@ Crime_Data$far <- ifelse(Crime_Data$distance>=Crime_Data$half_distance,1,0)
 #Crime_Data$close <- ifelse(Crime_Data$distance>=Crime_Data$half_distance,1,0)
 
 ```
-
-#Include sample graphic showing one district with dots =crimes and circle######################
-
-
 
 
 ### Establishing crime categories 
@@ -703,9 +779,8 @@ labels <- c('Hardship Index', 'Violent Dummy',
 
 ##Using stargazer, we create a table that summarizes the results of the Models 1.1 to 1.3. 
 stargazer::stargazer(violent_probit1, property_probit1, money_probit1, covariate.labels = labels,
-    title = 'Logistic Regression Estimates of Model 1.1 to 1.3',
+    title = 'Probit Regression Estimates of Model 1.1 to 1.3',
     digits = 2, type = 'html')
-
 
 ## Second stargazer table for fitted values 
 
@@ -782,9 +857,9 @@ kable(fitted2, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 ## Create covariate labels
 labels2 <- c('Per Capita Income', 'Percent Aged 16+ Unemployed', 'Percent Households below Poverty Line', 'Percent Aged 25 without High School Diploma', 'Percent of Housing Crowded', 'Percent Aged under 18 or over 64', 'Violent Dummy', 'Property Dummy', 'Money Dummy')
 
-##Using stargazer, we create a table that summarizes the results of the Models 1.1 to 1.3. 
+##Using stargazer, we create a table that summarizes the results of the Models 2.1 to 2.3. 
 stargazer::stargazer(violent_probit2, property_probit2, money_probit2, covariate.labels = labels2,
-    title = 'Logistic Regression Estimates of Model 2.1 to 2.3',
+    title = 'Probit Regression Estimates of Model 2.1 to 2.3',
     digits = 2, type = 'html')
 
 ```
@@ -809,16 +884,16 @@ kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 
 The significant difference in predicted probabilities for prositution crime indicates a spatial distribution of this crime type that is different from other crimes. **Figure x** shows that prostitution crimes are indeed clustered in around specific locations. 
 
-```{r Map Prostitution & Gambling crime, echo=FALSE}
+```{r Map Prostitution & Gambling crime, echo=FALSE, warnings = FALSE, error=FALSE, eval=FALSE}
 ## Clustered crimes 
 
 locationData <- subset(Crime_Data, Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING" )
 
-ChicagoMap <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
+ChicagoMap2 <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
                    
 ##ChicagoMap <- get_map(location = c(lon = -87.6747987, lat = 41.9654501), zoom = 10, maptype = "toner", source = "stamen")
 
-FinalMap <- ChicagoMap +
+FinalMap <- ChicagoMap2 +
                 geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
                 data = locationData) +
                 #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
@@ -830,7 +905,7 @@ FinalMap <- ChicagoMap +
                        colour = guide_legend(title = 'Crime Type'))
 print(FinalMap)
 
-## we want to add location of police station, district borders and our cirlce to this map
+## we want to add location of police station, district borders and our circle to this map
 ```
 
 
@@ -900,91 +975,149 @@ kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 ## Create covariate labels
 labels3 <- c('Per Capita Income', 'Percent Aged 16+ Unemployed', 'Percent Households below Poverty Line', 'Percent Aged 25 without High School Diploma', 'Percent of Housing Crowded', 'Percent Aged under 18 or over 64', 'Prostitution Dummy', 'Narcotics Dummy', 'Gambling Dummy', 'Arson Dummy')
 
-##Using stargazer, we create a table that summarizes the results of the Models 1.1 to 1.3. 
+##Using stargazer, we create a table that summarizes the results of the Models 3.1 to 3.3. 
 stargazer::stargazer(Prostitution_probit3, Narcotics_probit3, Gambling_probit3, Arson_probit3, covariate.labels = labels3,
-    title = 'Logistic Regression Estimates of Model 3.1 to 3.4',
+    title = 'Probit Regression Estimates of Model 3.1 to 3.4',
     digits = 2, type = 'html')
 
 ```
 
 
-```{r}
+
+### Model 4 
+
+Given the occurence of clustered crimes like prostitution, we assume that these observations could bias our overall estimates for the crime categories. Therefore, we exclude prostitution and gambling crimes and run the probit model again. 
+
+```{r ClusteredDataProbit, echo=FALSE}
 
 ##Excluding clustered crimes
 
 Crime_DataWithoutClusters <- subset(Crime_Data, Primary.Type != "PROSTITUTION" | Primary.Type != "GAMBLING" )
 
+##VIOLENT
+
+Violent_probit4 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(violent), family=binomial(link="probit"), data=Crime_DataWithoutClusters)
+
+fitted41 <- with(Crime_DataWithoutClusters, data.frame(
+  per_capita_income_=mean(as.integer(per_capita_income_)),
+  percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)),
+  percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)),
+  percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)),
+  percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)),
+  percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), 
+  violent = factor(0:1))
+  )
+
+fitted41$predicted <- predict(Violent_probit4, newdata = fitted41, type = 'response', interval='confidence')
+
+##PROPERTY
+
 Property_probit4 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(property), family=binomial(link="probit"), data=Crime_DataWithoutClusters)
 
+fitted42 <- with(Crime_DataWithoutClusters, data.frame(
+  per_capita_income_=mean(as.integer(per_capita_income_)),
+  percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)),
+  percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)),
+  percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)),
+  percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)),
+  percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), 
+  property = factor(0:1))
+  )
+
+fitted42$predicted <- predict(Property_probit4, newdata = fitted42, type = 'response', interval='confidence')
 
 
+##MONEY
+
+Money_probit4 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(money), family=binomial(link="probit"), data=Crime_DataWithoutClusters)
+
+fitted43 <- with(Crime_DataWithoutClusters, data.frame(
+  per_capita_income_=mean(as.integer(per_capita_income_)),
+  percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)),
+  percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)),
+  percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)),
+  percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)),
+  percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), 
+  money = factor(0:1))
+  )
+
+fitted43$predicted <- predict(Money_probit4, newdata = fitted43, type = 'response', interval='confidence')
+```
 
 
-## Linear Model with Absolute Distances 
+```{r ClusteredDataProbit Stargazer, echo=FALSE, results='asis'}
+## Create covariate labels
+labels4 <- c('Per Capita Income', 'Percent Aged 16+ Unemployed', 'Percent Households below Poverty Line', 'Percent Aged 25 without High School Diploma', 'Percent of Housing Crowded', 'Percent Aged under 18 or over 64', 'Violent Dummy', 'Property Dummy', 'Money Dummy')
 
-absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(property), data=Crime_Data )
-summary(absoluteDist)
-
-absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Prostitution), data=Crime_Data )
-summary(absoluteDist)
-
-absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Gambling), data=Crime_Data )
-summary(absoluteDist)
+##Using stargazer, we create a table that summarizes the results of the Models 4.1 to 4.3. 
+stargazer::stargazer(Violent_probit4, Property_probit4, Money_probit4, covariate.labels = labels4,
+    title = 'Probit Regression Estimates of Model 4.1 to 4.3',
+    digits = 2, type = 'html')
 
 ```
 
 
-+ as.factor(money) + as.factor(property)
+### Model 5 - Linear Regression Model: Absolute Distances
 
- + as.factor(property) + as.factor(violent)
+Because the Probit models show only relatively small differences in crime locations, we try a linear regression model that relies on the absolute distance as the dependent variable. 
 
-+ as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) 
+```{r Linear Regression Absolute Distance, echo=FALSE}
 
+## Linear Models with Absolute Distances 
 
+Violent_linear1 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(violent), data=Crime_Data )
 
-https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/cd857308ab8abdfc9a85de1c31a8955dd74f826a/LectureSlides/Lecture8/Lecture8.html#38 
+Property_linear1 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(property), data=Crime_Data )
 
+Money_linear1 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(money), data=Crime_Data )
 
-https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/b9f58b3e4dfde2543fb490f46349ce7afec4c18b/LectureSlides/Lecture9/Lecture9.html#17
+```
 
-https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/b9f58b3e4dfde2543fb490f46349ce7afec4c18b/LectureSlides/Lecture9/Lecture9.html#23 
+...
 
-https://cdn.rawgit.com/HertieDataScience/SyllabusAndLectures/b9f58b3e4dfde2543fb490f46349ce7afec4c18b/LectureSlides/Lecture9/Lecture9.html#62
+```{r Linear Models Stargazer, echo=FALSE, results='asis'}
+## Create covariate labels
+labelsLinear1 <- c('Hardship Index', 'Violent Dummy', 'Property Dummy', 'Money Dummy')
 
-```{r}
+##Using stargazer, we create a table that summarizes the results of the Models 5.1 to 5.3. 
+stargazer::stargazer(Violent_linear1, Property_linear1, Money_linear1, covariate.labels = labelsLinear1,
+    title = 'Linear Regression Estimates of Model 5.1 to 5.3',
+    digits = 2, type = 'html')
 
+```
 
+### Model 6 - Linear Regression Model: Absolute Distances for Individual Crimes 
 
+```{r Linear Regression Absolute Distance Ind. Crimes, echo=FALSE}
+
+## Linear Reg for individual Crimes 
+
+Prostitution_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Prostitution), data=Crime_Data )
+
+Gambling_linear2 <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Gambling), data=Crime_Data )
+
+```
+
+...
+
+```{r Linear Models Stargazer Ind. Files, echo=FALSE, results='asis'}
+## Create covariate labels
+labelsLinear2 <- c('Hardship Index', 'Prostitution Dummy', 'Gambling Dummy')
+
+##Using stargazer, we create a table that summarizes the results of the Models 6.1 to 6.3. 
+stargazer::stargazer(Prostitution_linear2, Gambling_linear2, covariate.labels = labelsLinear2,
+    title = 'Linear Regression Estimates of Model 6.1 to 6.3',
+    digits = 2, type = 'html')
 
 ```
 
 
 
 
+## Conclusion 
 
+...
 
-
-
-
-```{r, echo=FALSE}
-### MODELS ARE CREATED AND SUMMARY STATISTICS FOR THE MODELS ARE PRESENTED
-
-#violent_probit1 <- glm(Crime_Data$close ~ as.integer(Crime_Data$hardship_index) + Crime_Data$violent, family=binomial(link="probit"), data=Crime_Data)
-
-#violent_probit2 <- glm(Crime_Data$close ~  Crime_Data$violent + as.integer(Crime_Data$per_capita_income_), family=binomial(link="probit"), data=Crime_Data)
-
-#violent_model1 <- lm(Crime_Data$close ~ as.integer(Crime_Data$hardship_index) + Crime_Data$violent, data=Crime_Data)
-
-#summary(violent_probit2)
-
-#summary(violent_model1)
-
-#plot(violent_model1, which = 1)
-
-#plot(violent_model1, which = 2)
-
-#car::scatterplotMatrix(enterdataframe)
-```
 
 ## Bibliography 
 
