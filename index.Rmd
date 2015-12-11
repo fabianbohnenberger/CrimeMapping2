@@ -1,22 +1,109 @@
 ---
-title: "index"
+title: "Crime Mapping, or of where do crimes occur"
 author: "Sebastian Martinez - Fabian Bohnenberger"
 date: "December 10, 2015"
 output: html_document
+bibliography: literature/crimemapping_literature.bib
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+# Crime in Chicago. FAQ.
+Welcome.
+Throughout this website we are going to present the results from our research on the location of crime in the city of Chicago. 
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+**Our Format:** Frequently Asked Questions. 
 
-```{r}
-summary(cars)
+**Why** _(We get asked frequently)_**?**
+Sometimes it's easier to guide the audience through the logic of an argument, if you give them the questions. 
+
+And so, with out many introductions:
+
+```{r library and wd, include=FALSE}
+ 
+## NOTE: Running this file may take a few minutes because R will load ~340.000 observations (crime in the year 2012).
+
+## Working Directory ##
+
+# Create list of used working directories
+possible_dir <- c('C:/Users/Fabian/Documents/GitHub/CrimeMapping2', '/Users/SebastianMartinez/Dropbox/0. Hertie/3/Collaborative Social Science Data Analysis/GitHub/CrimeMapping/')
+
+# Set to first valid directory in the possible_dir vector
+repmis::set_valid_wd(possible_dir)
+
+## Loading required packages ## 
+
+# If this file does not run, check/install required r packages.
+library(repmis)
+library(rio)
+library(RSocrata)
+library(foreign)
+library(rio)
+library(plyr)
+library(GISTools)
+library(rgeos)
+library(knitr)
+library(maptools)
+library(ggmap)
+library(ggplot2)
 ```
 
-You can also embed plots, for example:
+# What We Think We Now
+Every community deals with the presence of crime. Criminal activity has a multitude of causes and the origins of crime have been the subject of investigation by many disciplines. The organization of law enforcement's response is a key factor in understanding the nature and extent of crime occurring in a specific area. For example, one city may be better at fighting crime, because it has correctly identified hotspots and distributed its police forces accordingly. This often includes setting up police stations in trouble zones or adjusting police district and beat boundaries to better allocate existing forces.
+
+In this context: This research project aims at tracking the relation between the location of reported crimes in a city and the spatial distribution and demarcation of police power. We especially focus on the location of police stations, police beats and districts accross the city. 
+
+
+# What We Would Like to Prove
+Basically, we ask ourselves if there is a relation between each kind of crime, and its location inside of a city with respect to the law enforcers.
+Then we would like to know if this relation is deterministic. And if so, in what direction. 
+Formally: *Does the physical location of police stations and the organizational demarcation of police districts have a statistically significant effect on the spatial distribution of crime in the city of Chicago?*
+This can be done in three simple steps:
+
+**1**: The farther away from the police station, the more crimes are committed. 
+
+**2**: An overall rising number of crimes means crime moves closer to the police station. 
+
+**3**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
+
+
+# And How?
+The proposed methodology is to run a regression using the *relative* position of a crime against the specific characteristics of the police district and the type of crime as independent variables. The idea behind this is that depending on the active presence of police in a district, criminals might have incentives to move further away from the places where the police have a more sound presence.
+
+We looked at the position of the crimes in relation to the police districs, and *scientifically* wondered: Do criminals systematically choose where to commit their crimes given the location of the police?
+
+# What did we find?
 
 ```{r, echo=FALSE}
-plot(cars)
+## R code to import the respective data files is sourced from TWO separate R file. The first one contains the crime data. NOTE that running this file may take a short while because R will load ~340.000 crime observations for the year 2012. The second contains import code for all other data. 
+## This file sources the required data files from our Github repository. The data files are identical to those on the City of Chicago Data Portal. 
+
+## Crime Data (NOTE: May take a few minutes)
+source('RSourceFiles/DataImportCrime.R')
+
+## Border Data & Controls 
+source('RSourceFiles/DataImportRest.R')
+
+
+## To access the information contained in the shapefiles, the .dbf file is used. 
+## The shapefiles are loaded into R, and the Centroids of the polygons are calculated. 
+boundaries <- read.dbf("RSourceFiles/PoliceDistrict.dbf")
+sids <- readShapePoly("RSourceFiles/PoliceDistrict.shp")
+PoliceDistrictCentroids = as.data.frame(gCentroid(sids,byid=TRUE))
+stations <- read.dbf("RSourceFiles/PoliceStationsDec2012.dbf")
+stations_ <- readShapePoints("RSourceFiles/PoliceStationsDec2012.shp")
+stations = as.data.frame(stations_)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+**Figure 1** First of all, where are the police stations located. We also added the location of the geometrical center of the district to see if there is any difference. *we initially thought that crimes occured farther away from the center where the police jurisdictions are less clear. This proved not to be a goog approach.*
+
+Centroids of every district in circles. Police stations in triangles. 
+
+**Figure 1**
+
+```{r Plot Police Districts and Stations, echo=FALSE}
+
+## A plot of the districts with the centroids is generated
+plot(sids)
+points(coordinates(stations_), pch=1)
+points(coordinates(sids),pch=2)
+
+```
