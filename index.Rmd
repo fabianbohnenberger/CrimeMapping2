@@ -1,10 +1,9 @@
 ---
 title: "Crime Mapping, or of where do crimes occur"
 author: "Sebastian Martinez - Fabian Bohnenberger"
-date: "December 10, 2015"
+date: "December 11, 2015"
 output: html_document
 bibliography: literature/crimemapping_literature.bib
-runtime: shiny
 ---
 
 # Crime in Chicago. FAQ.
@@ -46,7 +45,249 @@ library(maptools)
 library(ggmap)
 library(ggplot2)
 library(shiny)
+
+## R code to import the respective data files is sourced from TWO separate R file. The first one contains the crime data. NOTE that running this file may take a short while because R will load ~340.000 crime observations for the year 2012. The second contains import code for all other data. 
+## This file sources the required data files from our Github repository. The data files are identical to those on the City of Chicago Data Portal. 
+
+## Crime Data (NOTE: May take a few minutes)
+source('RSourceFiles/DataImportCrime.R')
+
+## Border Data & Controls 
+source('RSourceFiles/DataImportRest.R')
+
+
+## To access the information contained in the shapefiles, the .dbf file is used. 
+## The shapefiles are loaded into R, and the Centroids of the polygons are calculated. 
+boundaries <- read.dbf("RSourceFiles/PoliceDistrict.dbf")
+sids <- readShapePoly("RSourceFiles/PoliceDistrict.shp")
+PoliceDistrictCentroids = as.data.frame(gCentroid(sids,byid=TRUE))
+stations <- read.dbf("RSourceFiles/PoliceStationsDec2012.dbf")
+stations_ <- readShapePoints("RSourceFiles/PoliceStationsDec2012.shp")
+stations = as.data.frame(stations_)
+
+
+
+## Information is saved onto the boundaries data frame to be then merged with the additional information
+boundaries$centroid_x <- PoliceDistrictCentroids$x
+boundaries$centroid_y <- PoliceDistrictCentroids$y
+
+
+# Similarly, information on the boundaries of the communities is added. 
+commareas_dbf <- read.dbf("RSourceFiles/CommAreas.dbf")
+commareas <- readShapePoly("RSourceFiles/CommAreas.shp")
+CommAreasCentroids <- as.data.frame(gCentroid(commareas,byid=TRUE))
+
+## A plot of the community districts with the centroids is generated
+plot(commareas)
+points(CommAreasCentroids,pch=1)
+
+## Information is saved onto the boundaries data frame to be then merged with the additional information
+commareas_dbf$centroid_x <- CommAreasCentroids$x
+commareas_dbf$centroid_y <- CommAreasCentroids$y
+
+
+## A new dataframe named "total" is created that contains all crime and census data. NOTE: Requires loading crime data!
+## Contains 335481 obs. and 30 var. 
+total <- merge(crimes, census, by.x = "Community.Area", by.y = "ca")
+
+## Data from the boundaries and the community areas with their respective centroids is merged with the crime and census data
+total <- merge(total, boundaries, by.x = "District", by.y = "DIST_NUM")
+total <- merge(total, commareas_dbf, by.x = "Community.Area", by.y = "AREA_NUM_1")
+total <- merge(total, stations, by.x = "District", by.y = "DIST")
+
+### Renaming of coordinates 
+total$center_x <- total$centroid_x.y
+total$center_y <- total$centroid_y.y
+total$x <- total$X.Coordinate
+total$y <- total$Y.Coordinate
+total$st_location_x <- total$coords.x1
+total$st_location_y <- total$coords.x2
+
+# Absolute Distance
+## The Distance from the place where a crime was committed to the center of the police district is calculated. 
+
+total$y_dist <- total$y - total$center_y
+total$x_dist <- total$x - total$center_x
+
+
+total$x_st_dist <- total$x - total$st_location_x
+total$y_st_dist <- total$y - total$st_location_y
+total$distance <- sqrt((total$x_dist)^2+(total$y_dist)^2)
+total$distance_sta <- sqrt((total$x_st_dist)^2+(total$y_st_dist)^2)
+total$count <- 1
+# NA values for distance are omitted from the analysis
+total <- total[!(is.na(total$distance)),]
+total <- total[!(is.na(total$distance_sta)),]
+
+
+#Establishing two counters for loops (Strangely, one loop does not cover all districts.)
+total_1 <- total[(total$District<=10),] 
+total_2 <- total[(total$District>10),] 
+
+counter_1 <- aggregate(count ~ District, data = total_1, FUN=mean)
+counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
+
+# Relative Distance
+## To determine the relative distances (crime farthest away=1)
+
+## Data has to be adapted because distance needs to be calculated for each district separately. 
+
+### Loops to split the data set into smaller datasets, one for every district
+district_list <- list()
+district_list_2 <- list()
+for(i in counter_1$District) 
+{
+  temp <- total_1[total_1[,1]==i,]
+  nam <- paste("District", i, sep = "")
+  assign(nam, temp)
+  district_list[[nam]] <- temp
+}
+
+### Max distance is calculated and included into the data set
+for(i in counter_1$District) 
+{
+  print(i)
+  nam <- paste("District", i, sep = "")
+  #print(nam)
+  temp <- district_list[[nam]]
+  temp$max_distance <- max(abs(temp$distance))
+  temp$max_distance_sta <- max(abs(temp$distance_sta))
+  assign(nam, temp)
+  temp
+  district_list[[nam]] <- temp
+}
+
+### Loop to split the data set into smaller datasets, one for every district
+district_list_2 <- list()
+for(i in counter_2$District) 
+{
+  temp <- total_2[total_2[,1]==i,]
+  nam <- paste("District", i, sep = "")
+  assign(nam, temp)
+  district_list_2[[nam]] <- temp
+}
+
+### Max distance is calculated and included into the data set
+for(i in counter_2$District) 
+{
+  print(i)
+  nam <- paste("District", i, sep = "")
+  #print(nam)
+  temp <- district_list_2[[nam]]
+  temp$max_distance <- max(abs(temp$distance))
+  temp$max_distance_sta <- max(abs(temp$distance_sta))
+  assign(nam, temp)
+  temp
+  district_list_2[[nam]] <- temp
+}
+
+
+### Different data frames are appended into a single big data set again. 
+Crime_Data_1 <- ldply(district_list, data.frame, inform=TRUE)
+Crime_Data_2 <- ldply(district_list_2, data.frame, inform=TRUE)
+
+counter_3 <- aggregate(count ~ District, data = Crime_Data_1, FUN=mean)
+counter_4 <- aggregate(count ~ District, data = Crime_Data_2, FUN=mean)
+
+Crime_Data <- rbind.fill(Crime_Data_1,Crime_Data_2)
+#Crime_Data <- rbind.fill(Crime_Data,District10)
+#Dist10 is already included in total_1, don't add again 
+
+Crime_Data$rel_dist <- Crime_Data$distance/Crime_Data$max_distance
+Crime_Data$rel_dist_sta <- Crime_Data$distance/Crime_Data$max_distance_sta
+
+# Aggregate descriptive statistics
+## A "Collapse" is done on the relative distance by District and by typ of crime, and then
+## only to types of crime to see if there is a relationship between their occurence in relation to the 
+## border of the district. 
+
+agg_crime_type <- aggregate(rel_dist ~ District*Primary.Type, data=Crime_Data, FUN=mean)
+agg_crime_type$number <- aggregate(count ~ District*Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime <- aggregate(rel_dist ~ Primary.Type, data=agg_crime_type, FUN=mean)
+agg_crime_count <- aggregate(count ~ Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime <- merge(agg_crime, agg_crime_count, by = "Primary.Type")
+agg_crime <- agg_crime[order(agg_crime$rel_dist),]
+
+#to compare the two files manually:
+#write.csv(agg_crime, "agg_crime.csv")
+
+
+
+## This section repeats the same for the distance between crime and police station. 
+
+agg_crime_type_sta <- aggregate(rel_dist_sta ~ District*Primary.Type, data=Crime_Data, FUN=mean)
+agg_crime_type_sta$number <- aggregate(count ~ District*Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime_sta <- aggregate(rel_dist_sta ~ Primary.Type, data=agg_crime_type_sta, FUN=mean)
+agg_crime_sta_count <- aggregate(count ~ Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime_sta <- merge(agg_crime_sta, agg_crime_sta_count, by = "Primary.Type")
+agg_crime_sta <- agg_crime_sta[order(agg_crime_sta$rel_dist_sta),]
+
+
+# Creating data for tables on "Aggregate Crime Statistics" (number of crimes and distances) 
+
+table_temp <- agg_crime
+table_temp$distance_from_border_type <- agg_crime$Primary.Type
+table_temp$distance_from_border <- agg_crime$rel_dist
+table_temp$distance_to_station_type <- agg_crime_sta$Primary.Type
+table_temp$distance_to_station <- agg_crime_sta$rel_dist_sta
+table_temp$distance_from_border_number <- agg_crime$count
+table_temp$distance_to_station_number <- agg_crime_sta$count
+subdata1 <- c("distance_from_border_type", "distance_from_border_number")
+subdata2 <- c("distance_from_border_type", "distance_from_border", "distance_to_station_type", "distance_to_station")
+
 ```
+
+
+This are all the crimes that were reported in the city of Chicago in 2012. Quite a lot. This large amount of crimes lead us to believe that the crimes were not evenly distributed along the city. 
+
+```{r}
+
+
+ChicagoMap <- qmap("Chicago", zoom = 10, maptype = "toner", source = "stamen")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = Crime_Data) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+
+```
+
+
+This idea can clearly be seen in the following image. 
+```{r Map Most Common Crimes, echo=FALSE, warnings=FALSE, error=FALSE, results='hide'}
+
+SelectedCrimesData1 <- subset(Crime_Data, Primary.Type == "THEFT" | Primary.Type == "BATTERY" )
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData1) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+
+In particular, we were interested in seeing whether the crimes being committed (and reported) were so in relation to the police station of its respective district. 
+
+After some very careful data manipulation, we arrived at the following conclusions:
+
+- In general, criminals do not seem to take the position of the police district when committing their crimes. This has important implications with respect to the power police have over their jurisdictions. 
+
+Such a result can be seen in the following regression output: 
+
+
 
 # What We Think We Now
 Every community deals with the presence of crime. Criminal activity has a multitude of causes and the origins of crime have been the subject of investigation by many disciplines. The organization of law enforcement's response is a key factor in understanding the nature and extent of crime occurring in a specific area. For example, one city may be better at fighting crime, because it has correctly identified hotspots and distributed its police forces accordingly. This often includes setting up police stations in trouble zones or adjusting police district and beat boundaries to better allocate existing forces.
@@ -112,64 +353,4 @@ points(coordinates(sids),pch=2)
 
 
 
-```{r, echo=FALSE}
-shinyApp(
-  
-  ui = fluidPage(
-  
-  # Application title
-  titlePanel("Crime locations inside the city - by type"),
-  
-  # Sidebar with a slider input for the number of bins
-  sidebarLayout(position ="right",
-    sidebarPanel("Crimes",
-      selectInput("Select",
-                  "Select the kind of crime to display:",
-                  choices = as.character( agg_crime$Primary.Type))
-    ),
-    
-    # Show a plot of the generated distribution
-    mainPanel(align="center",
-      textOutput("text1"),
-      imageOutput("map")
-    )
-  )
-),
-  
-    server = function(input, output) {
-  
-  # Expression that generates a histogram. The expression is
-  # wrapped in a call to renderPlot to indicate that:
-  #
-  #  1) It is "reactive" and therefore should re-execute automatically
-  #     when inputs change
-  #  2) Its output type is a plot
-  
-  output$text1 <- renderText({ 
-    paste("You have selected", input$Select)
-  })
-  output$map <- renderPlot({
-    locationData <- subset(Crime_Data, Primary.Type == input$Select)
-    
-    ChicagoMap <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
-    
-    ##ChicagoMap <- get_map(location = c(lon = -87.6747987, lat = 41.9654501), zoom = 10, maptype = "toner", source = "stamen")
-    
-    FinalMap <- ChicagoMap +
-      geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
-                 data = locationData) +
-      #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
-      xlab('') + ylab('') +
-      theme(axis.ticks = element_blank(), 
-            axis.text.x = element_blank(),
-            axis.text.y = element_blank()) + 
-      guides(size = guide_legend(title = 'Crime Type'),
-             colour = guide_legend(title = 'Crime Type'))
-    print(FinalMap)
-  })
-},
-    
-    options = list(height = 500)
-)
-```
-
+**Note: An interactive version of this the information presented in maps for this project is available for download e**
