@@ -1,0 +1,114 @@
+---
+title: "Untitled"
+author: "fabianbohnenberger"
+date: "11. Dezember 2015"
+output: html_document
+---
+
+**Map 3** provides an overview of the distribution of crimes across the city of Chicago. The map shows that there are few areas where no crimes are committed. It is also noteworthy that the number of dots representing crimes on the map does not decrease substantially towards the City borders. In that regard, **Map 3** suggests that these borders might not have any statistically significant effect on the spatial distribution of crime. However, it might also indicate that crime moves towards the these borders because the police presence might be lower at the margins of the Police districts. 
+**Map 3 - All Crimes in Chicago 2012**
+```{r Map All Crimes, echo=FALSE, warnings = FALSE}
+
+library(ggmap)
+
+ChicagoMap <- qmap("Chicago", zoom = 10, maptype = "toner", source = "stamen")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = Crime_Data) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+
+```
+
+**Map 4** shows the spatial distribution of the most common crimes, theft and battery, in Chicago. The map indicates that these crimes are in fact relatively evenly distributed across the city because there are no real clusters or specific patterns visible. 
+
+**Map 4 - Distribution of Specific Crimes 1**
+```{r, echo=FALSE}
+
+SelectedCrimesData1 <- subset(Crime_Data, Primary.Type == "THEFT" | Primary.Type == "BATTERY" )
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData1) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+**Map 5** and **Map 6** indicate that other crimes might be distributed more unevenly. This can, for example be shown with Weapons Violations and Public Peace Violations. These seem to be more clustered in specific areas, which also seem to be the districts with the highest population density. Interestingly, they also seem to occur less often at the City border than in the inner city. 
+
+**Map 5 - Distribution of Specific Crimes 2**
+```{r, echo=FALSE}
+
+SelectedCrimesData2 <- subset(Crime_Data, Primary.Type == "PUBLIC PEACE VIOLATION" | Primary.Type == "WEAPONS VIOLATION" )
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData2) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+**Map 6** shows that some crimes are even more clustered. This relates especially to gambling and prostitution crimes that seem to be located at few lovations. Prostitution seems located at certain streets, while gambling remains concentrated in specific districts. In comparison, sex offenses are not that clustered. The same is, of example, true for narcotics related crimes. 
+
+**Map 6 - Distribution of Specific Crimes 3**
+```{r, echo=FALSE}
+
+SelectedCrimesData3 <- subset(Crime_Data, Primary.Type == "SEX OFFENSE" | Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData3) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+**Map 7** shows the distribution for three other felony crimes with relatively few observations (Homicide: 97, Kidnapping: 100, Arson: 155) in comparison to other crimes like burglary and theft. Again, we do not really see specific clusters of these crimes. 
+
+**Map 7 - Distribution of Specific Crimes 4**
+
+```{r, echo=FALSE, results=hide}
+
+SelectedCrimesData4 <- subset(Crime_Data, Primary.Type == "HOMICIDE" | Primary.Type == "ARSON" | Primary.Type == "KIDNAPPING")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = SelectedCrimesData4) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+```
+
+
+
+
+
