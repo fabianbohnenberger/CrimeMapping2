@@ -837,20 +837,9 @@ stargazer::stargazer(violent_probit1, property_probit1, money_probit1, covariate
     title = 'Probit Regression Estimates of Model 1.1 to 1.3',
     digits = 2, type = 'html')
 
-## Second stargazer table for fitted values 
-
-labelsfitted <- c('Hardship Index', 'Violent', 'Property', 'Money')
-
-stargazer::stargazer(fitted11, fitted12, fitted13, covariate.labels = labelsfitted,
-    title = 'Logistic Regression Estimates of Model 1.1 to 1.3',
-    digits = 2, type = 'html')
-
-
-
 ```
 
 
-  
   
 #### Model 2.1 - Socioeconomic indicators and Violent Crime as Predictors for the Distribution of Crime 
 
@@ -944,29 +933,27 @@ The more significant difference in predicted probabilities for prositution crime
 
 **Map 8 - Spatial Distribution of PROSTITUTION and GAMBLING crimes**
 
-```{r Map Prostitution & Gambling crime, echo=FALSE, warnings = FALSE, error=FALSE, eval=FALSE}
+
+```{r Map Prostitution and Gambling crime, echo=FALSE, warnings = FALSE, error=FALSE}
 ## Clustered crimes 
 
 locationData <- subset(Crime_Data, Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING" )
 
 ChicagoMap2 <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
-                   
-##ChicagoMap <- get_map(location = c(lon = -87.6747987, lat = 41.9654501), zoom = 10, maptype = "toner", source = "stamen")
 
-FinalMap <- ChicagoMap2 +
+FinalMap2 <- ChicagoMap2 +
                 geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
                 data = locationData) +
-                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
                 xlab('') + ylab('') +
                 theme(axis.ticks = element_blank(), 
                       axis.text.x = element_blank(),
                       axis.text.y = element_blank()) + 
                 guides(size = guide_legend(title = 'Crime Type'),
                        colour = guide_legend(title = 'Crime Type'))
-print(FinalMap)
+print(FinalMap2)
 
-## we want to add location of police station, district borders and our circle to this map
 ```
+
 
 
 #### Spatial Distribution: Narcotics Crime 
