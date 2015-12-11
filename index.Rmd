@@ -1,0 +1,392 @@
+---
+title: "Crime Mapping, or the story of where (we think) crimes occur"
+author: "Sebastian Martinez - Fabian Bohnenberger"
+output: html_document
+bibliography: literature/crimemapping_literature.bib
+---
+
+# Crime in Chicago. FAQ.
+Welcome.
+Throughout this website we are going to present the results from our research on the location of crime in the city of Chicago. 
+
+**Our Format:** Frequently Asked Questions. 
+
+**Why** _(We get asked frequently)_**?**
+Sometimes it's easier to guide the audience through the logic of an argument, if you give them the questions. 
+
+And so, with out many introductions:
+
+```{r library and wd, include=FALSE}
+ 
+## NOTE: Running this file may take a few minutes because R will load ~340.000 observations (crime in the year 2012).
+
+## Working Directory ##
+
+# Create list of used working directories
+possible_dir <- c('C:/Users/Fabian/Documents/GitHub/CrimeMapping2', '/Users/SebastianMartinez/Dropbox/0. Hertie/3/Collaborative Social Science Data Analysis/GitHub/CrimeMapping2/')
+
+# Set to first valid directory in the possible_dir vector
+repmis::set_valid_wd(possible_dir)
+
+## Loading required packages ## 
+
+# If this file does not run, check/install required r packages.
+library(repmis)
+library(rio)
+library(RSocrata)
+library(foreign)
+library(rio)
+library(plyr)
+library(GISTools)
+library(rgeos)
+library(knitr)
+library(maptools)
+library(ggmap)
+library(ggplot2)
+library(shiny)
+
+## R code to import the respective data files is sourced from TWO separate R file. The first one contains the crime data. NOTE that running this file may take a short while because R will load ~340.000 crime observations for the year 2012. The second contains import code for all other data. 
+## This file sources the required data files from our Github repository. The data files are identical to those on the City of Chicago Data Portal. 
+
+## Crime Data (NOTE: May take a few minutes)
+source('RSourceFiles/DataImportCrime.R')
+
+## Border Data & Controls 
+source('RSourceFiles/DataImportRest.R')
+
+
+## To access the information contained in the shapefiles, the .dbf file is used. 
+## The shapefiles are loaded into R, and the Centroids of the polygons are calculated. 
+boundaries <- read.dbf("RSourceFiles/PoliceDistrict.dbf")
+sids <- readShapePoly("RSourceFiles/PoliceDistrict.shp")
+PoliceDistrictCentroids = as.data.frame(gCentroid(sids,byid=TRUE))
+stations <- read.dbf("RSourceFiles/PoliceStationsDec2012.dbf")
+stations_ <- readShapePoints("RSourceFiles/PoliceStationsDec2012.shp")
+stations = as.data.frame(stations_)
+
+
+
+## Information is saved onto the boundaries data frame to be then merged with the additional information
+boundaries$centroid_x <- PoliceDistrictCentroids$x
+boundaries$centroid_y <- PoliceDistrictCentroids$y
+
+
+# Similarly, information on the boundaries of the communities is added. 
+commareas_dbf <- read.dbf("RSourceFiles/CommAreas.dbf")
+commareas <- readShapePoly("RSourceFiles/CommAreas.shp")
+CommAreasCentroids <- as.data.frame(gCentroid(commareas,byid=TRUE))
+
+## A plot of the community districts with the centroids is generated
+plot(commareas)
+points(CommAreasCentroids,pch=1)
+
+## Information is saved onto the boundaries data frame to be then merged with the additional information
+commareas_dbf$centroid_x <- CommAreasCentroids$x
+commareas_dbf$centroid_y <- CommAreasCentroids$y
+
+
+## A new dataframe named "total" is created that contains all crime and census data. NOTE: Requires loading crime data!
+## Contains 335481 obs. and 30 var. 
+total <- merge(crimes, census, by.x = "Community.Area", by.y = "ca")
+
+## Data from the boundaries and the community areas with their respective centroids is merged with the crime and census data
+total <- merge(total, boundaries, by.x = "District", by.y = "DIST_NUM")
+total <- merge(total, commareas_dbf, by.x = "Community.Area", by.y = "AREA_NUM_1")
+total <- merge(total, stations, by.x = "District", by.y = "DIST")
+
+### Renaming of coordinates 
+total$center_x <- total$centroid_x.y
+total$center_y <- total$centroid_y.y
+total$x <- total$X.Coordinate
+total$y <- total$Y.Coordinate
+total$st_location_x <- total$coords.x1
+total$st_location_y <- total$coords.x2
+
+# Absolute Distance
+## The Distance from the place where a crime was committed to the center of the police district is calculated. 
+
+total$y_dist <- total$y - total$center_y
+total$x_dist <- total$x - total$center_x
+
+
+total$x_st_dist <- total$x - total$st_location_x
+total$y_st_dist <- total$y - total$st_location_y
+total$distance <- sqrt((total$x_dist)^2+(total$y_dist)^2)
+total$distance_sta <- sqrt((total$x_st_dist)^2+(total$y_st_dist)^2)
+total$count <- 1
+# NA values for distance are omitted from the analysis
+total <- total[!(is.na(total$distance)),]
+total <- total[!(is.na(total$distance_sta)),]
+
+
+#Establishing two counters for loops (Strangely, one loop does not cover all districts.)
+total_1 <- total[(total$District<=10),] 
+total_2 <- total[(total$District>10),] 
+
+counter_1 <- aggregate(count ~ District, data = total_1, FUN=mean)
+counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
+
+# Relative Distance
+## To determine the relative distances (crime farthest away=1)
+
+## Data has to be adapted because distance needs to be calculated for each district separately. 
+
+### Loops to split the data set into smaller datasets, one for every district
+district_list <- list()
+district_list_2 <- list()
+for(i in counter_1$District) 
+{
+  temp <- total_1[total_1[,1]==i,]
+  nam <- paste("District", i, sep = "")
+  assign(nam, temp)
+  district_list[[nam]] <- temp
+}
+
+### Max distance is calculated and included into the data set
+for(i in counter_1$District) 
+{
+  print(i)
+  nam <- paste("District", i, sep = "")
+  #print(nam)
+  temp <- district_list[[nam]]
+  temp$max_distance <- max(abs(temp$distance))
+  temp$max_distance_sta <- max(abs(temp$distance_sta))
+  assign(nam, temp)
+  temp
+  district_list[[nam]] <- temp
+}
+
+### Loop to split the data set into smaller datasets, one for every district
+district_list_2 <- list()
+for(i in counter_2$District) 
+{
+  temp <- total_2[total_2[,1]==i,]
+  nam <- paste("District", i, sep = "")
+  assign(nam, temp)
+  district_list_2[[nam]] <- temp
+}
+
+### Max distance is calculated and included into the data set
+for(i in counter_2$District) 
+{
+  print(i)
+  nam <- paste("District", i, sep = "")
+  #print(nam)
+  temp <- district_list_2[[nam]]
+  temp$max_distance <- max(abs(temp$distance))
+  temp$max_distance_sta <- max(abs(temp$distance_sta))
+  assign(nam, temp)
+  temp
+  district_list_2[[nam]] <- temp
+}
+
+
+### Different data frames are appended into a single big data set again. 
+Crime_Data_1 <- ldply(district_list, data.frame, inform=TRUE)
+Crime_Data_2 <- ldply(district_list_2, data.frame, inform=TRUE)
+
+counter_3 <- aggregate(count ~ District, data = Crime_Data_1, FUN=mean)
+counter_4 <- aggregate(count ~ District, data = Crime_Data_2, FUN=mean)
+
+Crime_Data <- rbind.fill(Crime_Data_1,Crime_Data_2)
+#Crime_Data <- rbind.fill(Crime_Data,District10)
+#Dist10 is already included in total_1, don't add again 
+
+Crime_Data$rel_dist <- Crime_Data$distance/Crime_Data$max_distance
+Crime_Data$rel_dist_sta <- Crime_Data$distance/Crime_Data$max_distance_sta
+
+# Aggregate descriptive statistics
+## A "Collapse" is done on the relative distance by District and by typ of crime, and then
+## only to types of crime to see if there is a relationship between their occurence in relation to the 
+## border of the district. 
+
+agg_crime_type <- aggregate(rel_dist ~ District*Primary.Type, data=Crime_Data, FUN=mean)
+agg_crime_type$number <- aggregate(count ~ District*Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime <- aggregate(rel_dist ~ Primary.Type, data=agg_crime_type, FUN=mean)
+agg_crime_count <- aggregate(count ~ Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime <- merge(agg_crime, agg_crime_count, by = "Primary.Type")
+agg_crime <- agg_crime[order(agg_crime$rel_dist),]
+
+#to compare the two files manually:
+#write.csv(agg_crime, "agg_crime.csv")
+
+
+
+## This section repeats the same for the distance between crime and police station. 
+
+agg_crime_type_sta <- aggregate(rel_dist_sta ~ District*Primary.Type, data=Crime_Data, FUN=mean)
+agg_crime_type_sta$number <- aggregate(count ~ District*Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime_sta <- aggregate(rel_dist_sta ~ Primary.Type, data=agg_crime_type_sta, FUN=mean)
+agg_crime_sta_count <- aggregate(count ~ Primary.Type, data=Crime_Data, FUN=sum)
+agg_crime_sta <- merge(agg_crime_sta, agg_crime_sta_count, by = "Primary.Type")
+agg_crime_sta <- agg_crime_sta[order(agg_crime_sta$rel_dist_sta),]
+
+
+# Creating data for tables on "Aggregate Crime Statistics" (number of crimes and distances) 
+
+table_temp <- agg_crime
+table_temp$distance_from_border_type <- agg_crime$Primary.Type
+table_temp$distance_from_border <- agg_crime$rel_dist
+table_temp$distance_to_station_type <- agg_crime_sta$Primary.Type
+table_temp$distance_to_station <- agg_crime_sta$rel_dist_sta
+table_temp$distance_from_border_number <- agg_crime$count
+table_temp$distance_to_station_number <- agg_crime_sta$count
+subdata1 <- c("distance_from_border_type", "distance_from_border_number")
+subdata2 <- c("distance_from_border_type", "distance_from_border", "distance_to_station_type", "distance_to_station")
+
+```
+
+## MAPS, MAPS, MAPS
+
+This are all the crimes that were reported in the city of Chicago in 2012. Quite a lot. This large amount of crimes lead us to believe that the crimes were not evenly distributed along the city. (A small caveat: we are not sure why that output keeps popping up, but we are going to argue that it makes the graph look more professional). 
+
+```{r, echo=FALSE, warnings = FALSE, error=FALSE}
+
+
+ChicagoMap <- qmap("Chicago", zoom = 10, maptype = "toner", source = "stamen")
+
+FinalMap <- ChicagoMap +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = Crime_Data) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+
+```
+
+
+This idea can clearly be seen in the following image. Gambling and prostitution are clear examples of how the location of the crime is affected by something. Our initial hypothesis is that the presence of the police, determined by the location of the police headquarters for the district affect the actual place where crimes occur. 
+```{r Map Prostitution & Gambling crime, echo=FALSE, warnings = FALSE, error=FALSE}
+## Clustered crimes 
+
+locationData <- subset(Crime_Data, Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING" )
+
+ChicagoMap2 <- qmap("Chicago", zoom = 11, maptype = "toner", source = "stamen")
+                   
+##ChicagoMap <- get_map(location = c(lon = -87.6747987, lat = 41.9654501), zoom = 10, maptype = "toner", source = "stamen")
+
+FinalMap <- ChicagoMap2 +
+                geom_point(aes(x = Longitude, y = Latitude, colour = Primary.Type),
+                data = locationData) +
+                #geom_point(aes(x = stations$coords.x1, y = stations$coords.x2), data = stations) +
+                xlab('') + ylab('') +
+                theme(axis.ticks = element_blank(), 
+                      axis.text.x = element_blank(),
+                      axis.text.y = element_blank()) + 
+                guides(size = guide_legend(title = 'Crime Type'),
+                       colour = guide_legend(title = 'Crime Type'))
+print(FinalMap)
+
+## we want to add location of police station, district borders and our circle to this map
+```
+
+
+We wanted to see whether the crimes being committed (and reported) were so in relation to the police station of its respective district. Then we would like to know if this relation is deterministic. And if so, in what direction. 
+
+Formally: *Does the physical location of police stations and the organizational demarcation of police districts have a statistically significant effect on the spatial distribution of crime in the city of Chicago?*
+This can be done in some simple steps:
+
+**-**: The farther away from the police station, the more crimes are committed. 
+
+**-**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low.
+
+
+## SOME INITIAL RESULTS?
+
+We looked at the position of the crimes in relation to the police districs, and *scientifically* wondered: Do criminals systematically choose where to commit their crimes given the location of the police?
+
+After some very careful data manipulation, we arrived at the following **conclusions**:
+
+- In general, criminals do not seem to take the position of the police district when committing their crimes. This has important implications with respect to the power police have over their jurisdictions. 
+
+Such a result can be seen in the following regression output: 
+
+
+```{r Close and Far Crimes Dummy, echo=FALSE}
+
+# We create a variable called "far" (far = 1)
+Crime_Data$half_distance  <- 2*Crime_Data$max_distance/3
+Crime_Data$far <- ifelse(Crime_Data$distance>=Crime_Data$half_distance,1,0)
+##creating a dummy variable for violent and non-violent crime (violent = 1)
+
+Crime_Data$violent <- ifelse(Crime_Data$Primary.Type=="ASSAULT" | Crime_Data$Primary.Type=="BATTERY" | Crime_Data$Primary.Type=="CRIM SEXUAL ASSAULT" | Crime_Data$Primary.Type=="HOMICIDE" | Crime_Data$Primary.Type=="KIDNAPPING" | Crime_Data$Primary.Type=="OFFENSE INVOLVING CHILDREN" | Crime_Data$Primary.Type=="ROBBERY", 1,0)
+
+
+##creating a dummy variable for crime directed at person or property (property = 1)
+
+Crime_Data$property <- ifelse(Crime_Data$Primary.Type=="ARSON" | Crime_Data$Primary.Type=="BURGLARY" | Crime_Data$Primary.Type=="CRIMINAL DAMAGE" | Crime_Data$Primary.Type=="CRIMINAL TRESPASS" | Crime_Data$Primary.Type=="THEFT" | Crime_Data$Primary.Type=="MOTOR VEHICLE THEFT", 1,0)
+
+
+##creating a dummy variable for money component (money-related = 1)
+
+Crime_Data$money <- ifelse(Crime_Data$Primary.Type=="PROSTITUTION" | Crime_Data$Primary.Type=="NARCOTICS" | Crime_Data$Primary.Type=="THEFT" | Crime_Data$Primary.Type=="MOTOR VEHICLE THEFT" | Crime_Data$Primary.Type=="DECEPTIVE PRACTICE" | Crime_Data$Primary.Type=="GAMBLING", 1,0)
+
+
+##creating a dummy variable for money component (money-related = 1)
+
+Crime_Data$Prostitution <- ifelse(Crime_Data$Primary.Type=="PROSTITUTION", 1,0)
+
+Crime_Data$Narcotics <- ifelse(Crime_Data$Primary.Type=="NARCOTICS", 1,0)
+
+Crime_Data$Gambling <- ifelse(Crime_Data$Primary.Type=="GAMBLING", 1,0)
+
+Crime_Data$Arson <- ifelse(Crime_Data$Primary.Type=="ARSON", 1,0)
+
+##VIOLENT
+## Regression 
+violent_probit1 <- glm(far ~ as.integer(hardship_index) + as.factor(violent), family=binomial(link="probit"), data=Crime_Data)
+
+## Creating Fitted Values for the Regression 
+fitted11 <- with(Crime_Data, data.frame(hardship_index=mean(as.integer(hardship_index)), violent = factor(0:1))) 
+fitted11$predicted <- predict(violent_probit1, newdata = fitted11, type = 'response', interval='confidence')
+kable(fitted11, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values')
+
+```
+
+The output presented here shows that when controlling for the specific socioeconomic characteristics of each of the specific districts, there is not a statistically significant difference in the probability that a crime would be committed close or far to the police station for every district.
+
+### How did we develop this idea?
+We ran a regression considering the *relative* position of a crime to the police station. With this information we ran a probabilistic model that determines what is the probability of a certain outcome, given two or more different options. In our case, the "outcome" is that crime is committed farther away from the station. The options? That the crime is violent or non violent. As seen in the table above.
+
+In search for robustness, we tried to mix things up and look at different "categories of crimes". The results hold when looking if the crimes are considered money-related, or if they are considered a property crime. For none of these differentiations we could find a significant difference on the probability that the crime is commited farther away from the station. We tried looking for a different specification of socioeconomic characteristics and looking at the individual components of the Hardship index. Same. No difference
+
+
+## What's next, then?
+Well, we tried many specifications, to see if there was something we could rescue from our analysis. It turns out that if you look at prostitution, there is an important difference in where crimes are committed in relation to the center of a police station. Let's have a look:
+
+```{r Prostitution_probit3, echo=FALSE}
+
+Prostitution_probit3 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(Prostitution), family=binomial(link="probit"), data=Crime_Data)
+
+fitted3 <- with(Crime_Data, data.frame(per_capita_income_=mean(as.integer(per_capita_income_)), percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)), percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)), percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)), percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)), percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), Prostitution = factor(0:1)))
+fitted3$predicted <- predict(Prostitution_probit3, newdata = fitted3, type = 'response', interval='confidence')
+
+coltable6 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Prostitution', 'predicted')
+
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable6)
+```
+
+As it can be seen, prostitution has a very clear behavior with respect to the location of the police station. It may very well be a consequence of clustering of the sex industries in places where there was historically less coverage of the police. 
+
+## SOME CONCLUDING REMARKS
+Based on observations of reported crimes, the location of police stations and the organizational demarcation of police power in the city of Chicago we tried to assess the spatial distribution of crime. We posed the question whether crime occurs primarily farther away from the police station and whether the borders of police districts have a statistically significant effect on the distribution of crime. Our main conclusion is that given the data and the specifics of approach used in this research, there is no systematic behavior from the criminals in relation to the police station. 
+
+We like to highlight the results that look at gambling and prostitution crimes. However, we expect for future research that we are able to use more data on the presence of police is needed to establish a reliable model on the effects of police power on the spatial distribution of crime. We think that data on patrol routes, times and perception of police presence by citizens would be required to measure the impact more accurately.
+
+
+
+# FURTHER INFORMATION
+**-The complete document can be found in the following link:**
+[Here:](https://rawgit.com/fabianbohnenberger/CrimeMapping2/master/ResearchPaper.html)
+
+
+**-Note: An interactive version of the maps shown in website is available for download in the link provided**
+Please make a local version of the following [repository:](https://github.com/fabianbohnenberger/CrimeMapping2/tree/master)
+and run the file "crime.R"
+
+
