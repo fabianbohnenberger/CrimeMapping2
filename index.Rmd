@@ -290,13 +290,11 @@ print(FinalMap)
 We wanted to see whether the crimes being committed (and reported) were so in relation to the police station of its respective district. Then we would like to know if this relation is deterministic. And if so, in what direction. 
 
 Formally: *Does the physical location of police stations and the organizational demarcation of police districts have a statistically significant effect on the spatial distribution of crime in the city of Chicago?*
-This can be done in three simple steps:
+This can be done in some simple steps:
 
-**1**: The farther away from the police station, the more crimes are committed. 
+**-**: The farther away from the police station, the more crimes are committed. 
 
-**2**: An overall rising number of crimes means crime moves closer to the police station. 
-
-**3**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
+**-**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
 
 
 ## SOME INITIAL CONCLUSIONS?
@@ -393,7 +391,9 @@ kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for F
 
 ```
 
+As it can be seen, it would seem that crimes related to drugs tend to occur closer to the police district.
 
 
-**Note: An interactive version of this the information presented in maps for this project is available for download in the link provided**
+
+**Note: An interactive version of the maps shown in website is available for download in the link provided**
 
