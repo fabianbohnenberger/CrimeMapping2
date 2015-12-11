@@ -2,7 +2,7 @@
 title: 'Collaborative Research: Spatial Distribution of Crime as a Function of the
   Demarcation of Police Power'
 author: "Fabian Bohnenberger and Sebastian Martinez"
-date: "December 11, 2015"
+date: "November 20, 2015"
 output: html_document
 bibliography: literature/crimemapping_literature.bib
 ---
