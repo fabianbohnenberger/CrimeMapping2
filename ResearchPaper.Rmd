@@ -259,7 +259,16 @@ total$count <- 1
 total <- total[!(is.na(total$distance)),]
 total <- total[!(is.na(total$distance_sta)),]
 
-counter <- aggregate(count ~ District, data = total, FUN=mean)
+
+#
+total_1 <- total[(total$District<=10),] 
+total_2 <- total[(total$District>10),] 
+
+
+
+counter_1 <- aggregate(count ~ District, data = total_1, FUN=mean)
+counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
+
 ```
 
 ```{r Relative Distance Loop, echo=FALSE}
@@ -271,9 +280,10 @@ counter <- aggregate(count ~ District, data = total, FUN=mean)
 
 ### Loop to split the data set into smaller datasets, one for every district
 district_list <- list()
+district_list_2 <- list()
 for(i in counter$District) 
 {
-  temp <- total[total[,2]==i,]
+  temp <- total_1[total_1[,1]==i,]
   nam <- paste("District", i, sep = "")
   assign(nam, temp)
   district_list[[nam]] <- temp
@@ -282,17 +292,52 @@ for(i in counter$District)
 ### Max distance is calculated and included into the data set
 for(i in counter$District) 
 {
+  print(i)
   nam <- paste("District", i, sep = "")
+  print(nam)
   temp <- district_list[[nam]]
   temp$max_distance <- max(abs(temp$distance))
   temp$max_distance_sta <- max(abs(temp$distance_sta))
   assign(nam, temp)
+  temp
   district_list[[nam]] <- temp
+}
+
+### Loop to split the data set into smaller datasets, one for every district
+district_list_2 <- list()
+for(i in counter_2$District) 
+{
+  temp <- total_2[total_2[,1]==i,]
+  nam <- paste("District", i, sep = "")
+  assign(nam, temp)
+  district_list_2[[nam]] <- temp
+}
+
+### Max distance is calculated and included into the data set
+for(i in counter_2$District) 
+{
+  print(i)
+  nam <- paste("District", i, sep = "")
+  print(nam)
+  temp <- district_list_2[[nam]]
+  temp$max_distance <- max(abs(temp$distance))
+  temp$max_distance_sta <- max(abs(temp$distance_sta))
+  assign(nam, temp)
+  temp
+  district_list_2[[nam]] <- temp
 }
 
 
 ### Different data frames are appended into a single big data set again. 
-Crime_Data <- ldply(district_list, data.frame)
+Crime_Data_1 <- ldply(district_list, data.frame, inform=TRUE)
+Crime_Data_2 <- ldply(district_list_2, data.frame, inform=TRUE)
+
+counter_3 <- aggregate(count ~ District, data = Crime_Data_1, FUN=mean)
+counter_4 <- aggregate(count ~ District, data = Crime_Data_2, FUN=mean)
+
+Crime_Data <- rbind.fill(Crime_Data_1,Crime_Data_2)
+Crime_Data <- rbind.fill(Crime_Data,District10)
+
 Crime_Data$rel_dist <- Crime_Data$distance/Crime_Data$max_distance
 Crime_Data$rel_dist_sta <- Crime_Data$distance/Crime_Data$max_distance_sta
 #Crime_Data <- Crime_Data[order(Crime_Data$rel_dist),]
@@ -422,6 +467,11 @@ curve(dnorm(x, mean=mean(exampledist), sd=sd(exampledist)), add=TRUE, col="darkb
 ```
 
 
+#Here more disaggregated description of data (example districts?,bar graphs??)
+
+
+
+
 
 
 ### Evaluation of relative distance variable 
@@ -431,7 +481,7 @@ This secction evaluates wheter our caluclation of *relative* distances of certai
 
 
 # Add a few graphs for rel. distance / abs. distance for specific crime types (!) / crime categories as developed belwo
-# Map with cricle and crimes  (?) 
+
 
 
 Figure 5 and Figure 6 show the same distributions as Figure 3 and Figure 4, but using the distance to the Police Station as center point. 
@@ -474,6 +524,11 @@ Crime_Data$far <- ifelse(Crime_Data$distance>=Crime_Data$half_distance,1,0)
 
 ```
 
+#Include sample graphic showing one district with dots =crimes and circle######################
+
+
+
+
 ### Establishing crime categories 
 
 To compare the effects of the location of the police station on different types of crime, we create different groups of crimes from our data. Although we cannot be sure that all observations represent the group criteria to the fullest degree (e.g. all crimes in the category "violent" necessarily included the application of violence), the categories were created based on widely-used classifications of crime, including the [International Classification of Crime for Statistical Purposes](https://www.unodc.org/documents/data-and-analysis/statistics/crime/ICCS/ICCS_Draft_for_consultation_August_2014.pdf) developed by the United Nations Office of Drugs and Crime and the Chicago Police Department - Illinois Uniform Crime Reporting (IUCR) codes. 
@@ -506,6 +561,8 @@ First, we distinguish between violent and non-violent crime. Based on our data f
 
 Crime_Data$violent <- ifelse(Crime_Data$Primary.Type=="ASSAULT" | Crime_Data$Primary.Type=="BATTERY" | Crime_Data$Primary.Type=="CRIM SEXUAL ASSAULT" | Crime_Data$Primary.Type=="HOMICIDE" | Crime_Data$Primary.Type=="KIDNAPPING" | Crime_Data$Primary.Type=="OFFENSE INVOLVING CHILDREN" | Crime_Data$Primary.Type=="ROBBERY", 1,0)
 
+
+## EXCLUDED INtimidation (!) and sex offense  (!)####################################
 
 ```
 
