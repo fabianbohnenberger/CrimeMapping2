@@ -281,7 +281,7 @@ counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
 ### Loop to split the data set into smaller datasets, one for every district
 district_list <- list()
 district_list_2 <- list()
-for(i in counter$District) 
+for(i in counter_1$District) 
 {
   temp <- total_1[total_1[,1]==i,]
   nam <- paste("District", i, sep = "")
@@ -290,7 +290,7 @@ for(i in counter$District)
 }
 
 ### Max distance is calculated and included into the data set
-for(i in counter$District) 
+for(i in counter_1$District) 
 {
   print(i)
   nam <- paste("District", i, sep = "")
@@ -336,7 +336,8 @@ counter_3 <- aggregate(count ~ District, data = Crime_Data_1, FUN=mean)
 counter_4 <- aggregate(count ~ District, data = Crime_Data_2, FUN=mean)
 
 Crime_Data <- rbind.fill(Crime_Data_1,Crime_Data_2)
-Crime_Data <- rbind.fill(Crime_Data,District10)
+#Crime_Data <- rbind.fill(Crime_Data,District10)
+#Dist10 is already included in total_1, don't add again 
 
 Crime_Data$rel_dist <- Crime_Data$distance/Crime_Data$max_distance
 Crime_Data$rel_dist_sta <- Crime_Data$distance/Crime_Data$max_distance_sta
@@ -907,8 +908,30 @@ stargazer::stargazer(Prostitution_probit3, Narcotics_probit3, Gambling_probit3, 
 ```
 
 
+```{r}
+
+##Excluding clustered crimes
+
+Crime_DataWithoutClusters <- subset(Crime_Data, Primary.Type != "PROSTITUTION" | Primary.Type != "GAMBLING" )
+
+Property_probit4 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(property), family=binomial(link="probit"), data=Crime_DataWithoutClusters)
 
 
+
+
+
+## Linear Model with Absolute Distances 
+
+absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(property), data=Crime_Data )
+summary(absoluteDist)
+
+absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Prostitution), data=Crime_Data )
+summary(absoluteDist)
+
+absoluteDist <- lm(distance_sta ~ as.integer(hardship_index) + as.factor(Gambling), data=Crime_Data )
+summary(absoluteDist)
+
+```
 
 
 + as.factor(money) + as.factor(property)
