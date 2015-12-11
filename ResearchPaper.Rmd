@@ -51,29 +51,31 @@ library(stargazer)
 This research project shows the relationship between the spatial distribution of crimes and the allocation and demarcation of police power in the city of Chicago.
 
 
+The motivation for this research stems from the way a city is divided into organizational districts, invisible to pedestrians, but potentially limiting in the way police can effectively carry out their duty. 
+...
 
 
 ## Introduction 
 
-Every community deals with the presence of crime. Criminal activity has a multitude of causes and the origins of crime have been the subject of investigation by many disciplines. The organization of law enforcement's response is a key factor in understanding the nature and extent of crime occurring in a specific area. For example, one city may be better at fighting crime, because it has correctly identified hotspots and distributed its police forces accordingly. This often includes setting up police stations in trouble zones or adjusting police district and beat boundaries to better allocate existing forces.
+Every community deals with the presence of crime. Criminal activity has a multitude of causes and the origins of crime have been the subject of investigation by many disciplines. The organization of law enforcement's response is a key factor in understanding the nature and extent of crime occurring in a specific area. For example, one city may be better at fighting crime because it has correctly identified hotspots and distributed its police forces accordingly. This often includes setting up police stations in trouble zones or adjusting police district and beat boundaries to better allocate existing forces.
 
-This research project aims at tracking the relation between the location of reported crimes in a city and the spatial distribution and demarcation of police power. We especially focus on the location of police stations, police beats and districts accross the city. By looking at crime as a function of the distance to police stations and district borders, we analyze whether certain crimes are more likely to be perpetrated at the beat or district borders and whether the average distance of certain crimes to either the police stations or boundary is particularly relevant. If, for example, hotspots for certain crimes were located predominantely at the district border, this could indicate coordination problems between adjoining police forces. Crimes directed against property, not persons, or criminal activity that includes a monetary transaction and is often organized (narcotics trade and prostitution) may also be located farther away from the police station than, for example, "crimes of passion". Controlling for other factors - especially socioeconomic conditions -, differences in crime levels at the district borders could thus indicate different levels of cooperation between police districts in a given city. 
+This research project aims at tracking the relation between the location of reported crimes in a city and the spatial distribution and demarcation of police power. We especially focus on the location of police stations and police districts across the city. By looking at crime as a function of the distance to police stations and district borders, we analyze whether certain crimes are more likely to be perpetrated at the district borders and whether the average distance of certain crimes to either the police stations or boundary is particularly relevant. If, for example, hotspots for certain crimes were located predominantely at the district border, this could indicate coordination problems between adjoining police forces and higher police presence in the center of district. Crimes directed against property, not persons, or criminal activity that includes a monetary transaction and is often organized (narcotics trade and prostitution) may also be located farther away from the police station than, for example, "crimes of passion". Controlling for other factors - especially socioeconomic conditions -, differences in crime levels at the district borders could thus indicate different levels of cooperation between police districts and different force allocations inside a given district. 
 
 
 ## Literature Overview and Relevance of Research
 
 The origins of crime have been the subject of investigation by many disciplines. A significant amount of the literature has looked at socioeconomic conditions to explain the occurence of urban crime. @Blau1982, for example, finds that "socioecconomic inequality between races, as well as economic inequality generally, increases the rates of criminal violence". @Delbecq, in their analysis of Chicago crime, see criminal activity "rooted in a lack or a weakening of social control exerted by communities because of poverty, residential instability and racial/ethnic heterogeneity". However, an increasing amount of literature, for example @Charron2009, includes spatial characteristics of neighborhoods and districts, including urban structure, urbanisation levels, land/zone use, the presence of graffiti, garbage and run-down buildings, employment density, pollution, availability of public transport, and other variables in their analysis.
 
-Some literature has looked primarily at the effects of a city's spatial characteristics on crime. Described in a more conceptual manner, a city is not only set of objects placed one next to the other, but a set of places with specific functions designed for its citizens. The inhabitants interact with the physical space and vice versa; thus shaping both available actions as well as surrounding structure. For example, researchers have found that a denser, mixed used neighborhood has a smaller number of crime occurrences than a sprawled, more spread out neighborhood. @Morenoff:1997ux specifically show that crime has a spatial component, often ignored by social researchers. They also argue that depending on the physical structure of a city, areas with high crime can spread out to neighboring areas in a process called "spatial diffusion of crime". Further, @Rosenfeld:1999vv found that when controlling for neighborhood demographic characteristics, the spatial distribution of crime is due to both the intrinsic characteristics of gang culture and the facilitating neighborhood characteristics. @Leenders:2002fa, for example, builds on this research in his calculation of weights matrices to determine the use composition of a block, but also its relation with neighboring blocks, to allow for empirical research on the diffusion effects of crime. 
+Some literature has looked primarily at the effects of a city's spatial characteristics on crime. Described in a more conceptual manner, a city is not only set of objects and buildings placed one next to the other, but a set of places with specific functions designed for its citizens. The inhabitants interact with the physical space and vice versa; thus shaping both available actions as well as surrounding structure. For example, researchers have found that a denser, mixed-use neighborhood has a smaller number of crime occurrences than a sprawled, more spread out neighborhood. @Morenoff:1997ux specifically show that crime has a spatial component, often ignored by social researchers. They also argue that depending on the physical structure of a city, areas with high crime can spread out to neighboring areas in a process called "spatial diffusion of crime". Further, @Rosenfeld:1999vv found that when controlling for neighborhood demographic characteristics, the spatial distribution of crime is due to both the intrinsic characteristics of gang culture and the facilitating neighborhood characteristics. @Leenders:2002fa, for example, builds on this research in his calculation of "weights matrices" to determine the use composition of a block, but also its relation with neighboring blocks, to allow for empirical research on the diffusion effects of crime. 
 
-Other research, especially criminological literature, focuses more on the operative part of crime prevention, but also heavily relies on the research on the effects of spatial characteristics. The "Broken Windows Theory" postulated by James Q. Wilson and George Kelling in 1982 in an influential article in the Atlantic Monthly represents an important starting point. @Wilson suggest that targeting minor disorder, e.g. vandalism, broken windows could help reduce more serious crime. The theory assumes that the landscape "communicates" to people. A broken window transmits to criminals the message that a community displays a lack of informal social control, and is therefore unable or unwilling to defend itself against a criminal invasion. In more recent literature, this theory is, however criticized for its simplicity. Acccording to @Harcourt, evidence from New York City crime data and from social experiments in five US cities would "provide no support for a simple first-order disorder-crime relationship as hypothesized by Wilson and Kelling, nor for the proposition that broken windows policing is the optimal use of scarce law enforcement resources."
+Other research, especially criminological literature, focuses more on the operative part of crime prevention, but also relies heavily on the research on the effects of spatial characteristics. The "Broken Windows Theory" postulated by James Q. Wilson and George Kelling in 1982 in an influential article in the Atlantic Monthly represents an important starting point. @Wilson suggest that targeting minor disorder, e.g. vandalism and broken windows, could help reduce more serious crime. The theory assumes that the landscape "communicates" to people. A broken window transmits to criminals the message that a community displays a lack of informal social control, and is therefore unable or unwilling to defend itself against a criminal invasion. In more recent literature, this theory is, however criticized for its simplicity. Acccording to @Harcourt, evidence from New York City crime data and from social experiments in five US cities would "provide no support for a simple first-order disorder-crime relationship as hypothesized by Wilson and Kelling, nor for the proposition that broken windows policing is the optimal use of scarce law enforcement resources."
 
 While urban hotspots of crime are often well documented, there has been, according to @Zipkin2014, only limited research on "optimal and dynamically adapting police responses to changing crime patterns". By looking at the the City of Chicago's data, we aim to contribute to the research that tries to understand optimal police responses both on the operative as well as on the organizational level. 
 
 
 ## Research Question / Hypotheses 
 
-Our research aims to show the relationship between the spatial distribution of crimes and the allocation and demarcation of police power in the city of Chicago. We operationalize the concept of "demarcation of police power" in two ways: First, we measure the distance between crime scenes and the physical location of the police station. Second, we measure the distance between the crime scene and the calculated center of the district. This provides an approximation of the distance of the crime to the district border, which is otherwise difficult and hardware-intensive to calculate. The motivation for this research stems from the way a city is divided into organizational districts, invisible to pedestrians, but potentially limiting in the way police can effectively carry out their duty.   
+Our research aims to show the relationship between the spatial distribution of crimes and the allocation and demarcation of police power in the city of Chicago. We operationalize the concept of "demarcation of police power" in two ways: First, we measure the distance between crime scene and the physical location of the police station. Second, we measure the distance between the crime scene and the calculated center of the district. This provides an approximation of the distance of the crime to the district border, which is otherwise difficult and hardware-intensive to calculate. The motivation for this research stems from the way a city is divided into organizational districts, invisible to pedestrians, but potentially limiting in the way police can effectively carry out their duty.   
 
 ### Research Question 
 
@@ -87,46 +89,44 @@ The proposed research questions are connected to the following hypotheses:
 
 **Hypothesis 2**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
 
+
 ## Methodology
-The proposed methodology is to run a regression using the *relative* position of a crime against the specific characteristics of the police district and the type of crime as independent variables. The idea behind this is that depending on the active presence of police in a district, criminals might have incentives to move further away from the places where the police have a more sound presence. In other words, this research is trying to explain the development of crime hotspots in relation to the organizational distribution of responsibility to specific police forces in a city. The data sources, as well as the necessary transformations are described in this chapter. 
 
-...
-
+The proposed methodology is to run different regression models (linear and probit) to analyse the relationship between the occurence of crime and the distribution of police power in Chicago. The idea is that depending on the active presence of police in a district, criminals might have incentives to move away from the places where the police is present, especially around the police station. In other words, this research is trying to explain the development of crime hotspots in relation to the organizational distribution of responsibility to specific police forces in a city. The data sources, as well as the necessary transformations are described in this chapter. This will be accompanied by descriptive statistics that outline the 2012 crime data in Chicago. Following the presentation of the data, we develop different regression models to identify crime types that occur closer at the district borders/farther from the polics station of each district. We use two types of regressions: Probit models based on a dummy variable that distinguishes between "Close" and "Far" Crimes depending on a circle drawn around the police station (which will be described in more detail below) and Linear models that use the absolute distance between crimes and the police station as the dependent variable.  
 
 
-## Data Collection 
+### Data Collection 
 
-The main source for accessing data for this research project is the [Data Portal of the City of Chicago](data.cityofchicago.org). The website provides access to government data on the City departments, services, facilities and performance and also allows access via an API. The [Socrata Open Data API](https://github.com/chicago) can be used to load the data directly into R. To import the information, we rely on R's "Rio" package, which features the "import" function.
+The main source for accessing data for this research project is the [Data Portal of the City of Chicago](data.cityofchicago.org). The website provides access to government data on the City departments, services, facilities and performance. The [Socrata Open Data API](https://github.com/chicago) can be used to load the data directly into R. To import the information, we rely on R's "Rio" package, which features the "import" function.
 
-### Overview of data used in this project
+#### Overview of data used in this project and data limitations
 
 Because of data limitations on our control variables, our research focuses on the year 2012. For this year, Census data is available on the Data Portal that provides a more comprehensive overview of the socioeconomic characteristics. More recent data on the control variables is only partially available from 2012 to present. Therefore, this research project focused on crime data of the year 2012, which amounts to about 335.000 observations for the City of Chicago, and uses available Census Data of the same year as control variables. 
 
 1. Crime Data (available 2001 to present)
 
-This [dataset on crime in Chicago](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) includes information on all crimes that were reported in the city from 2001 until 2015. It includes the date and time, the "primary type" of the crime (e.g. theft, arson, narcotics), a short description (e.g. type of weapon used, broad indication of the value stolen), and whether there has been an arrest. Additionally, it provides us with detailed data on the location of the crime, including latitude and longitude as well as in which police beat and district and in which community district the crime occurred. It also includes a specific location description (e.g. sidewalk, office building or school).
+This [dataset on crime in Chicago](https://data.cityofchicago.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2) includes information on all crimes that were reported in the city from 2001 until 2015. It includes the date and time, the "primary type" of the crime (e.g. theft, arson, narcotics), a short description (e.g. type of weapon used, broad indication of the value stolen), and whether there has been an arrest. Additionally, it provides detailed data on the location of the crime, including latitude and longitude as well as in which police beat and district and in which community district the crime occurred. It also includes a specific location description (e.g. sidewalk, office building or school).
 
 2. District and community border data
 
 For our research project, information on borders of police districts and "communities" is crucial. Information on [police districts](https://data.cityofchicago.org/Public-Safety/Boundaries-Police-Districts-current-/fthy-xz3r) is important because we are interested in the spatial distribution of crime as a function of the location of police stations and the organizational delineation of police power. [Community borders](https://data.cityofchicago.org/Facilities-Geographic-Boundaries/Boundaries-Community-Areas-current-/cauq-8yn6) are important because most socioeconomic data available on the Chicago Data Portal is aggregated on the community level. This does also include information on age distributions, health, as well as organizational statistics like abandoned buildings, land use and energy consumption. 
 
-3. Control variables (including socioeconomic data, esp. 2008-2012)
+3. Control variables (including socioeconomic data, 2008-2012)
 
-We rely on a regression to explain the occurence of crime at specific locations as a function of the spatial allocation of police force in a city. Our dependent variable is the occurence of specific crimes. Independent variables are the distance to the main and support police stations as well as the distance to the center of the police district. For the regression, we have to control for the specific characteristics of the police districts in question that affect crime. Economic and demographic factors in each city area (community level data) must be considered, as well as other imortant variables. The City of Chicago Data Portal offers information on the following characteristics of communities: 
+In the regression models, we need to control for the specific characteristics of the police districts in question that affect crime. Economic and demographic factors in each city area (community level data) must be considered, as well as other imortant variables. The City of Chicago Data Portal offers information on the following characteristics of communities: 
 
   - [Census Data 2008-2012](https://data.cityofchicago.org/Health-Human-Services/Census-Data-Selected-socioeconomic-indicators-in-C/kn9c-c2s2), especially focusing on certain socioeconomic indicators (percent of housing crowded, percent households below poverty line, percentage aged 16+ unemployed, percentage aged 25+ without highschool diploma, percentage aged under 18 or over 64, per capita income, and a weighted "hardship index". Further explanation on the dataset can be accessed [here](https://data.cityofchicago.org/api/views/fwb8-6aw5/files/A5KBlegGR2nWI1jgP6pjJl32CTPwPbkl9KU3FxlZk-A?download=true&filename=P:\EPI\OEPHI\MATERIALS\REFERENCES\ECONOMIC_INDICATORS\Dataset_Description_socioeconomic_indicators_2012_FOR_PORTAL_ONLY.pdf)  
-  - Additional information on the community level can be found in this [public health statistics dataset](https://data.cityofchicago.org/Health-Human-Services/Public-Health-Statistics-Selected-public-health-in/iqnk-2tcu), which not only provides information on birth rates and a number of diseases, but also lists environment or poverty-related diseases (e.g. childhood lead poisoning), the teen birth rate and includes data on unemployment levels on the community level. This [dataset](https://data.cityofchicago.org/Health-Human-Services/Public-Health-Statistics-Life-Expectancy-By-Commun/qjr3-bm53) provides additional information on the life expectancy on the community level. Additionally, the Data Portal includes relevant [data](https://data.cityofchicago.org/Community-Economic-Development/Vacant-Properties-by-Community-Area/cjr7-qyw5) like the number of vacant properties on the community level.
   
-  - Other datasets on the community level are: Data on [energy use](https://data.cityofchicago.org/Environment-Sustainable-Development/Average-Electricity-Usage-per-Square-Foot-by-Commu/usfg-z9mx) and data on [special empowerment zones](https://data.cityofchicago.org/Community-Economic-Development/Boundaries-Empowerment-Zones/m6ef-sjkj) across districts.
+  - Additional information on the community level can be found in this [public health statistics dataset](https://data.cityofchicago.org/Health-Human-Services/Public-Health-Statistics-Selected-public-health-in/iqnk-2tcu), which not only provides information on birth rates and a number of diseases, but also lists environment or poverty-related diseases (e.g. childhood lead poisoning), the teen birth rate and includes data on unemployment levels on the community level. This [dataset](https://data.cityofchicago.org/Health-Human-Services/Public-Health-Statistics-Life-Expectancy-By-Commun/qjr3-bm53) provides additional information on the life expectancy on the community level. 
   
-  - The City of Chicago also offers information on police funding over the years on a district level. It is, however, not easily discernible whether year-to-year budget changes are actually funding active police work or are, for example, neccessary to cover pensions. Also, the allocation of funding to specific districts cannot be fully ascertained based on the provided data. 
+  - The City of Chicago also offers information on police funding over the years on a district level. It is, however, not easily discernible whether year-to-year budget changes are actually funding active police work or are, for example, necessary to cover pensions. Also, the allocation of funding to specific districts cannot be fully ascertained based on the provided data. It is therefore not used in this analysis. 
   
-  - There are, however, some factors that are not readily measurable or for which no data exists and we need to make indirect assumptions (e.g. citizens attitude towards crime, crime reporting practices of the citizenry, family cohesiveness, cultural characteristics) @FBI offers a comprehensive list of factors that are known to affect the volume and type of crime. 
+  - There are, however, some factors that are not readily measurable or for which no data exists. In these cases, we need to make indirect assumptions (e.g. citizens attitude towards crime, crime reporting practices of the citizenry, family cohesiveness, cultural characteristics) @FBI offers a comprehensive list of factors that are known to affect the volume and type of crime. 
 
 
-### Data collection 
+#### Data collection 
 
-Data is collected using R's "Rio" package. Alternatively, one can also rely on the City of Chicago Data Portal's recommended "RSocrata" package. 
+Data is collected using R's "Rio" package. Alternatively, one can also rely on the City of Chicago Data Portal's recommended "RSocrata" package. All data used in this project is also available in its original format on our Repository on GitHub. 
 
 ```{r, echo=FALSE}
 ## R code to import the respective data files is sourced from TWO separate R file. The first one contains the crime data. NOTE that running this file may take a short while because R will load ~340.000 crime observations for the year 2012. The second contains import code for all other data. 
@@ -141,11 +141,11 @@ source('RSourceFiles/DataImportRest.R')
 ```
 
 
-### Calculating District Centers 
+#### Calculating District Centers 
 
-As described above, an important first step for our analysis is the calulcation of th police district centers. This provides us with an approximation of the distance of each crime to the district border. In addition, we prepare the data on the location of police stations. 
+As described above, an important first step for our analysis is the calulcation of the police district centers. This provides us with an approximation of each crimes' distance to the district border. In addition, we prepare the data on the location of police stations. 
 
-```{r CCalculating district centers, echo=FALSE}
+```{r Calculating district centers, echo=FALSE}
 
 ## To access the information contained in the shapefiles, the .dbf file is used. 
 ## The shapefiles are loaded into R, and the Centroids of the polygons are calculated. 
@@ -157,7 +157,7 @@ stations_ <- readShapePoints("RSourceFiles/PoliceStationsDec2012.shp")
 stations = as.data.frame(stations_)
 ```
 
-**Map 1** shows a plot with the map of Chicago. It is divided into Police Districts, the centroids of every district are presented in circles. The locations of all the police stations is presented in triangles. 
+**Map 1** shows a plot with the map of Chicago. It is divided into Police Districts, the centroids of every district are presented in circles. The location of each police station is represented by a triangle. 
 
 **Map 1**
 
@@ -184,7 +184,7 @@ commareas <- readShapePoly("RSourceFiles/CommAreas.shp")
 CommAreasCentroids <- as.data.frame(gCentroid(commareas,byid=TRUE))
 ```
 
-Second, we have to compare the police districts with the delineation of "communities" in Chicago. This is important because the socioeconomic data that will be used in our regression is based on this aggregation level. As **Map 2** shows, the Community Districts are different from the Police Districts. The figure also includes the respective community districts. We will therefore have to be careful in our following analysis to link each crime with the relevant socioeconomic information depending on in which community, not police district, it is committed. 
+As a second step, we have to compare the police districts with the delineation of "communities" in Chicago. This is important because the socioeconomic data that will be used in our regression is based on this aggregation level. As **Map 2** shows, the Community Districts are different from the Police Districts. The figure also includes the centers of the respective community districts. We will therefore have to be careful in the following analysis to link the socioeconomic conditions on the community level to the crimes in question, which are reported by police district. To link each crime with the relevant socioeconomic information, we rely on the community code that is included in the crime dataset. 
 
 **Map 2**
 
@@ -200,7 +200,7 @@ commareas_dbf$centroid_y <- CommAreasCentroids$y
 ```
 
 
-### Merging the Data
+#### Merging the Data
 
 To connect the datasets mentioned above and include the relevant information on district centers, we merge the relevant data in a two step process. First, the crime and census data are merged based on the "community area" code that is used in both datasets. Second, the data on police districts and community areas with their respective centroids is merged with the crime and census data. 
 
@@ -231,7 +231,7 @@ total$st_location_y <- total$coords.x2
 
 ```
 
-## Calculating the distance of crimes
+### Calculating the Distance of Crimes to District Center and Police Station
 
 To determine which crimes occur closer to the border of each district, and hence farther away from the location of the police station for that district, we calculate two distances: First, based on our calculations of the police district centers, we estimate the distance between the location of each crime and the center of the police district. Second, we determine the distance between the crime scene and the police station. 
 
@@ -274,7 +274,7 @@ counter_2 <- aggregate(count ~ District, data = total_2, FUN=mean)
 
 ## Data has to be adapted because distance needs to be calculated for each district separately. 
 
-### Loop to split the data set into smaller datasets, one for every district
+### Loops to split the data set into smaller datasets, one for every district
 district_list <- list()
 district_list_2 <- list()
 for(i in counter_1$District) 
@@ -397,14 +397,14 @@ table2 <- table_temp[subdata2]
 
 ```
 
-**Table 1** shows the types of crimes included in the City of Chicago dataset with the respective number of reported instances for the year 2012. The table presents the data for all districts and all crime types. It is important that a some categories contain very few observations. Therefore, any inferences based on these categories will neccessarily be less statistically significant. We omit these categories in the inferential part of our analysis.
+**Table 1** shows the types of crimes included in the City of Chicago dataset with the respective number of reported instances for the year 2012. The table presents the data for all districts and all crime types. It is important that  some categories contain very few observations. Therefore, any inferences based on these categories will neccessarily be less statistically significant. We omit these categories in the inferential part of our analysis.
 
 ```{r kable Table 1, echo=FALSE}
 coltable1 <- c("Crime Types", "Reported Crimes")
 kable(as.matrix(table1), digits = 2, caption = "Table 1 - Number of Reported Crimes (All Districts, All Crime Types)", col.names=coltable1) 
 
-write.csv(table1, "table1.csv")
-write.csv(table2, "table2.csv")
+#write.csv(table1, "table1.csv")
+#write.csv(table2, "table2.csv")
 
 ## , row.names = NA, col.names = colnamesTable1(Crime_Types, Reported_Crimes)
 ```
@@ -420,17 +420,17 @@ kable(as.matrix(table2), digits = 2, caption = "Table 2 - Relative Distance to P
 ```
 
 
-As shown in **Table 2**, the *relative* distances in both columns are not the same, but lead to overall similar results. Differences occur because the police station is not always located at the center of the district, as it is calculated in this analysis. 
+As shown in **Table 2**, the *relative* distances in both columns are not the same, but lead to overall similar results. Differences occur because the police station is not always located at the center of the district, as was already shown in **Map 1**.
 
-It is interesting to compare which crimes tend to occur farther away from the center of the district, as well as which ones tend to occur farther away from where the stations is located. It is, for example, noteworthy that prositiution, sexual criminal assault and sex offense seem to occur farther away from the police station or the district center in both measurements. On the other hand, arson and stalking tend to be reported at closer distances to the center. 
+It is interesting to compare which crimes tend to occur farther away from the center of the district, as well as which ones tend to occur farther away from where the stations is located. It is, for example, noteworthy that prostitution, sexual criminal assault and also theft (which is the most prevalent crime in the statistic) seem to occur farther away from the police station or the district center in both measurements. On the other hand, arson, public peace violations and liquor law violations tend to be perpetrated/reported at closer distances to the center. 
 
-However, this aggregated level clearly does not allow for much variation in the relative distances. Most of the observations are clustered around very similar values, which becomes especially visible in **Figure 3**. A closer look at more disaggregated data seems to be necessary to discover spatial patterns of the perpetration of crime on the district level. 
+However, this aggregated level clearly does not allow for much variation in the relative distances. Most of the observations are clustered around very similar values, which becomes especially visible in **Figure 1**. A closer look at more disaggregated data seems to be necessary to discover spatial patterns of the perpetration of crime on the district level. 
 
 ### Disaggregated Crime Statistics 
 
-As **Figure 3** shows, the relative distance for crime types across all districts is not significantly distributed to make inferences about the occurence of specific crimes. We need to look at more disaggregated data to find differences in the spatial distribution of crime. 
+As **Figure 1** shows, the relative distance for crime types across all districts is not significantly distributed to make inferences about the occurence of specific crimes. We need to look at more disaggregated data to find differences in the spatial distribution of crime. 
 
-**Figure 3 - Relative Distance between Crime Types and District Center across Police Districts**  
+**Figure 1 - Relative Distance between Crime Types and District Center across Police Districts**  
 ```{r, echo=FALSE}
 
 reldist <- as.numeric(agg_crime$rel_dist)
@@ -439,9 +439,9 @@ curve(dnorm(x, mean=mean(reldist), sd=sd(reldist)), add=TRUE, col="darkblue", lw
 
 ```
 
-As we can see in **Figure 4**, looking at the data for each crime type and district separately leads to significant improvements. The figure includes all calculated average distances that were calculated on a district-by-district basis. We will have to assess differences in the spatial distribution of crime (in terms of distance from the police district center) for each district in a next step. 
+Looking at the data for each crime type and district separately leads to significant improvements. **Figure 2** includes all average distances that were calculated on a district-by-district basis. We will have to assess differences in the spatial distribution of crime (in terms of distance from the police district center) for individual crimes in a next step. 
 
-**Figure 4 - Relative Distance between Crime Types and District Center for individual Police Districts**
+**Figure 2 - Relative Distance between Crime Types and District Center for individual Police Districts**
 ```{r, echo=FALSE}
 
 reldistind <- as.numeric(agg_crime_type$rel_dist)
@@ -450,13 +450,101 @@ curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblu
 
 ```
 
+**Figures 3 to 5** present the distribution of average relative distances (per police district) for specific crimes. The graphs show that the relative distance, which corrects for the different size of police districts, is not equal across all police districts. Instead, we see that the average relative distances across the 22 Police Districts in the city of Chicago approximate a normal distribution. 
+
+**Figure 3 - Relative Distance for THEFT across Police Districts**
+
+```{r, echo=FALSE}
+
+SelectedCrimeFigure1 <- subset(agg_crime_type, Primary.Type == "THEFT")
+
+reldistind <- as.numeric(SelectedCrimeFigure1$rel_dist)
+hist(reldistind, freq=TRUE, main ="Relative Distance for THEFT")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+
+**Figure 4 - Relative Distance for PROSTITUTION across Police Districts**
+
+```{r, echo=FALSE}
+SelectedCrimeFigure2 <- subset(agg_crime_type, Primary.Type == "PROSTITUTION")
+
+reldistind <- as.numeric(SelectedCrimeFigure2$rel_dist)
+hist(reldistind, freq=TRUE, main ="Relative Distance for PROSTITUTION")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+
+**Figure 5 - Relative Distance for HOMICIDE across Police Districts**
+
+```{r, echo=FALSE}
+SelectedCrimeFigure3 <- subset(agg_crime_type, Primary.Type == "HOMICIDE")
+
+reldistind <- as.numeric(SelectedCrimeFigure3$rel_dist)
+hist(reldistind, freq=TRUE, main ="Relative Distance for HOMICIDE")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+
+### Evaluation of relative distance variable 
+
+This section evaluates wheter our caluclation of *relative* distances of certain crimes to the crime farthest away per district adds value to our statistical analysis. As the previous section has already shown, the relative distance helps us account for the different physical sizes of police districts across the city. However, referring back to **Table 2**, the question remains whether the relative distance can actually make a meaningful contribution on a disaggregated level. 
+
+**Figure 6** and **Figure 7** show the same distributions as **Figure 1** and **Figure 2**, but use the distance to the Police Station as the center point. What is evident, again, is that the relative distance does not contribute much value on an agggregate level. Instead, the relative distance should be used on a district-by-district basis. 
+
+**Figure 6 - Relative Distance between Crime Types and District Center across Police Districts**
+```{r, echo=FALSE}
+reldiststa <- as.numeric(agg_crime_sta$rel_dist_sta)
+hist(reldiststa, freq=TRUE, main ="Relative Distance to Police Station")
+curve(dnorm(x, mean=mean(reldiststa), sd=sd(reldiststa)), add=TRUE, col="darkblue", lwd=2) 
+
+```
+
+**Figure 7 - Relative Distance between Crime Types and District Center for individual Police Districts**
+```{r, echo=FALSE}
+
+reldistindsta <- as.numeric(agg_crime_type_sta$rel_dist_sta)
+hist(reldistindsta, freq=TRUE, main ="Relative Distance for individual Police Districts")
+curve(dnorm(x, mean=mean(reldistindsta), sd=sd(reldistindsta)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+**Figures 8 to 10** show that the relative distance can actually be useful on a district level. While the graphs show relatively low values for districts 1 and 8, the values in district 20 are much more distributed. This indicates that the relative distance as calculated above could actually be a useful way to point to differences in the spatial distribution of crimes between districts. 
+
+**Figure 8 - Average Relative Distances for District 1**
+```{r, echo=FALSE}
+SelectedCrimeFigure4 <- subset(agg_crime_type, District == "1")
+
+reldistind <- as.numeric(SelectedCrimeFigure4$rel_dist)
+hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+**Figure 9 - Average Relative Distances for District 8**
+```{r, echo=FALSE}
+SelectedCrimeFigure5 <- subset(agg_crime_type, District == "8")
+
+reldistind <- as.numeric(SelectedCrimeFigure5$rel_dist)
+hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+**Figure 10 - Average Relative Distances for District 20**
+```{r, echo=FALSE}
+SelectedCrimeFigure6 <- subset(agg_crime_type, District == "20")
+
+reldistind <- as.numeric(SelectedCrimeFigure6$rel_dist)
+hist(reldistind, freq=FALSE, main ="Relative Distance for individual Police Districts")
+curve(dnorm(x, mean=mean(reldistind), sd=sd(reldistind)), add=TRUE, col="darkblue", lwd=2) 
+```
+
+
 ### Crime Distribution 
 
-**Map 3** provides an overview of the distribution of crimes across the city of Chicago. The map shows that there are few areas where no crimes are committed. It is also noteworthy that the number of dots representing crimes on the map does not decrease substantially towards the City borders. In that regard, **Map 3** suggests that these borders might not have any statistically significant effect on the spatial distribution of crime. However, it might also indicate that crime moves towards the these borders because the police presence might be lower at the margins of the Police districts. 
+This section presents a more comprehensive overview of the distribution of crime itself. **Map 3** provides an overview of the distribution of crimes across the city of Chicago. The map shows that there are few areas where no crimes are committed. It is also noteworthy that the number of dots representing crimes on the map does not decrease substantially towards the City borders. In that regard, **Map 3** suggests that these borders might not have any statistically significant effect on the spatial distribution of crime. However, it might also indicate that crime moves towards the these borders because the police presence might be lower at the margins of the Police districts. 
  
 **Map 3 - All Crimes in Chicago 2012**  
 
-```{r Map All Crimes, echo=FALSE, warnings = FALSE, error=FALSE, results='hide'}
+```{r Map All Crimes, echo=FALSE, warnings=FALSE, error=FALSE, results='hide'}
 
 ChicagoMap <- qmap("Chicago", zoom = 10, maptype = "toner", source = "stamen")
 
@@ -478,7 +566,7 @@ print(FinalMap)
 
 **Map 4 - Distribution of Specific Crimes 1**  
 
-```{r Map Most Common Crimes, echo=FALSE, warnings = FALSE, error=FALSE}
+```{r Map Most Common Crimes, echo=FALSE, warnings=FALSE, error=FALSE, results='hide'}
 
 SelectedCrimesData1 <- subset(Crime_Data, Primary.Type == "THEFT" | Primary.Type == "BATTERY" )
 
@@ -499,7 +587,7 @@ print(FinalMap)
 
 **Map 5 - Distribution of Specific Crimes 2**  
 
-```{r Map Violations, echo=FALSE, warnings = FALSE, error=FALSE}
+```{r Map Violations, echo=FALSE, warnings=FALSE, error=FALSE, results='hide'}
 
 SelectedCrimesData2 <- subset(Crime_Data, Primary.Type == "PUBLIC PEACE VIOLATION" | Primary.Type == "WEAPONS VIOLATION" )
 
@@ -522,7 +610,7 @@ print(FinalMap)
 
 **Map 6 - Distribution of Specific Crimes 3**  
 
-```{r Map Clustered Crimes, echo=FALSE, warnings = FALSE, error=FALSE}
+```{r Map Clustered Crimes, echo=FALSE, warnings=FALSE, error=FALSE, results='hide'}
 
 SelectedCrimesData3 <- subset(Crime_Data, Primary.Type == "SEX OFFENSE" | Primary.Type == "PROSTITUTION" | Primary.Type == "GAMBLING")
 
@@ -543,7 +631,7 @@ print(FinalMap)
 
 **Map 7 - Distribution of Specific Crimes 4**  
 
-```{r Map Specific Felonies, echo=FALSE, warnings = FALSE, error=FALSE}
+```{r Map Specific Felonies, echo=FALSE, warnings = FALSE, error=FALSE, results='hide'}
 
 SelectedCrimesData4 <- subset(Crime_Data, Primary.Type == "HOMICIDE" | Primary.Type == "ARSON" | Primary.Type == "KIDNAPPING")
 
@@ -559,30 +647,6 @@ FinalMap <- ChicagoMap +
                        colour = guide_legend(title = 'Crime Type'))
 print(FinalMap)
 ```
-
-
-### Evaluation of relative distance variable 
-
-This secction evaluates wheter our caluclation of *relative* distances of certain crimes to the crime farthest away per district adds value to our statistical analysis. 
-
-Figure 5 and Figure 6 show the same distributions as Figure 3 and Figure 4, but use the distance to the Police Station as the center point. 
-
-**Figure 5 - Relative Distance between Crime Types and District Center across Police Districts**
-```{r, echo=FALSE}
-reldiststa <- as.numeric(agg_crime_sta$rel_dist_sta)
-hist(reldiststa, freq=TRUE, main ="Relative Distance to Police Station")
-curve(dnorm(x, mean=mean(reldiststa), sd=sd(reldiststa)), add=TRUE, col="darkblue", lwd=2) 
-
-```
-
-**Figure 6 - Relative Distance between Crime Types and District Center for individual Police Districts**
-```{r, echo=FALSE}
-
-reldistindsta <- as.numeric(agg_crime_type_sta$rel_dist_sta)
-hist(reldistindsta, freq=TRUE, main ="Relative Distance for individual Police Districts")
-curve(dnorm(x, mean=mean(reldistindsta), sd=sd(reldistindsta)), add=TRUE, col="darkblue", lwd=2) 
-```
-
 
 
 
