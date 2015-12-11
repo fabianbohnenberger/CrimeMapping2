@@ -110,8 +110,8 @@ img {
 <p><strong>-</strong>: The farther away from the police station, the more crimes are committed.</p>
 <p><strong>-</strong>: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low.</p>
 </div>
-<div id="some-initial-conclusions" class="section level2">
-<h2>SOME INITIAL CONCLUSIONS?</h2>
+<div id="some-initial-results" class="section level2">
+<h2>SOME INITIAL RESULTS?</h2>
 <p>We looked at the position of the crimes in relation to the police districs, and <em>scientifically</em> wondered: Do criminals systematically choose where to commit their crimes given the location of the police?</p>
 <p>After some very careful data manipulation, we arrived at the following <strong>conclusions</strong>:</p>
 <ul>
@@ -144,12 +144,12 @@ img {
 <div id="how-did-we-develop-this-idea" class="section level3">
 <h3>How did we develop this idea?</h3>
 <p>We ran a regression considering the <em>relative</em> position of a crime to the police station. With this information we ran a probabilistic model that determines what is the probability of a certain outcome, given two or more different options. In our case, the “outcome” is that crime is committed farther away from the station. The options? That the crime is violent or non violent. As seen in the table above.</p>
-<p>We tried to mix things up and look at different “categories of crimes”. The results hold when looking if the crimes are considered money-related, or if they are considered a property crime. For none of these differentiations we could find a significant difference on the probability that the crime is commited farther away from the station. We tried looking for a different specification of socioeconomic characteristics. Same. No difference</p>
+<p>In search for robustness, we tried to mix things up and look at different “categories of crimes”. The results hold when looking if the crimes are considered money-related, or if they are considered a property crime. For none of these differentiations we could find a significant difference on the probability that the crime is commited farther away from the station. We tried looking for a different specification of socioeconomic characteristics and looking at the individual components of the Hardship index. Same. No difference</p>
 </div>
 </div>
 <div id="whats-next-then" class="section level2">
 <h2>What’s next, then?</h2>
-<p>Well, we tried many specifications, to see if there was something we could rescue from our analysis. It turns out that if you look at narcotics, there is an important difference in where crimes are committed in relation to the center of a police station. Let’s have a look:</p>
+<p>Well, we tried many specifications, to see if there was something we could rescue from our analysis. It turns out that if you look at prostitution, there is an important difference in where crimes are committed in relation to the center of a police station. Let’s have a look:</p>
 <table>
 <caption>Predicted Probabilities for Fitted Values</caption>
 <thead>
@@ -160,7 +160,7 @@ img {
 <th align="center">25+WithoutHighSchool%</th>
 <th align="center">HousingCrowded%</th>
 <th align="center">Under18Over64%</th>
-<th align="center">Narcotics</th>
+<th align="center">Prostitution</th>
 <th align="center">predicted</th>
 </tr>
 </thead>
@@ -183,15 +183,33 @@ img {
 <td align="center">4.782</td>
 <td align="center">34.478</td>
 <td align="center">1</td>
-<td align="center">0.024</td>
+<td align="center">0.065</td>
+</tr>
+<tr class="odd">
+<td align="center">As it can be seen,</td>
+<td align="center">prostitution has a</td>
+<td align="center">very clear behavior w</td>
+<td align="center">ith respect to the locati</td>
+<td align="center">on of the police st</td>
+<td align="center">ation. It may very</td>
+<td align="center">well be a conse</td>
+<td align="center">quence of clustering of the sex industries in places where there was historically less coverage of the police.</td>
 </tr>
 </tbody>
 </table>
-<p>As it can be seen, it would seem that crimes related to drugs tend to occur closer to the police district.</p>
-<p><strong>Note: An interactive version of the maps shown in website is available for download in the link provided</strong></p>
+</div>
+<div id="some-concluding-remarks" class="section level2">
+<h2>SOME CONCLUDING REMARKS</h2>
+<p>Based on observations of reported crimes, the location of police stations and the organizational demarcation of police power in the city of Chicago we tried to assess the spatial distribution of crime. We posed the question whether crime occurs primarily farther away from the police station and whether the borders of police districts have a statistically significant effect on the distribution of crime. Our main conclusion is that given the data and the specifics of approach used in this research, there is no systematic behavior from the criminals in relation to the police station.</p>
+<p>We like to highlight the results that look at gambling and prostitution crimes. However, we expect for future research that we are able to use more data on the presence of police is needed to establish a reliable model on the effects of police power on the spatial distribution of crime. We think that data on patrol routes, times and perception of police presence by citizens would be required to measure the impact more accurately.</p>
+</div>
+</div>
+<div id="further-information" class="section level1">
+<h1>FURTHER INFORMATION</h1>
+<p><strong>-The complete document can be found in the following link:</strong> <a href="https://rawgit.com/fabianbohnenberger/CrimeMapping2/master/ResearchPaper.html">Here:</a></p>
+<p><strong>-Note: An interactive version of the maps shown in website is available for download in the link provided</strong> Please make a local version of the following <a href="https://github.com/fabianbohnenberger/CrimeMapping2/tree/master">repository:</a> and run the file “crime.R”</p>
 <div class="references">
 
-</div>
 </div>
 </div>
 

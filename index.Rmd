@@ -1,7 +1,6 @@
 ---
-title: "Crime Mapping, or of where do crimes occur"
+title: "Crime Mapping, or the story of where (we think) crimes occur"
 author: "Sebastian Martinez - Fabian Bohnenberger"
-date: "December 11, 2015"
 output: html_document
 bibliography: literature/crimemapping_literature.bib
 ---
@@ -294,10 +293,10 @@ This can be done in some simple steps:
 
 **-**: The farther away from the police station, the more crimes are committed. 
 
-**-**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low. 
+**-**: Specific crimes are mostly perpetrated near the district borders; their chance to occur closer to police stations is low.
 
 
-## SOME INITIAL CONCLUSIONS?
+## SOME INITIAL RESULTS?
 
 We looked at the position of the crimes in relation to the police districs, and *scientifically* wondered: Do criminals systematically choose where to commit their crimes given the location of the police?
 
@@ -354,46 +353,40 @@ The output presented here shows that when controlling for the specific socioecon
 ### How did we develop this idea?
 We ran a regression considering the *relative* position of a crime to the police station. With this information we ran a probabilistic model that determines what is the probability of a certain outcome, given two or more different options. In our case, the "outcome" is that crime is committed farther away from the station. The options? That the crime is violent or non violent. As seen in the table above.
 
-We tried to mix things up and look at different "categories of crimes". The results hold when looking if the crimes are considered money-related, or if they are considered a property crime. For none of these differentiations we could find a significant difference on the probability that the crime is commited farther away from the station. We tried looking for a different specification of socioeconomic characteristics. Same. No difference
+In search for robustness, we tried to mix things up and look at different "categories of crimes". The results hold when looking if the crimes are considered money-related, or if they are considered a property crime. For none of these differentiations we could find a significant difference on the probability that the crime is commited farther away from the station. We tried looking for a different specification of socioeconomic characteristics and looking at the individual components of the Hardship index. Same. No difference
 
 
 ## What's next, then?
-Well, we tried many specifications, to see if there was something we could rescue from our analysis. It turns out that if you look at narcotics, there is an important difference in where crimes are committed in relation to the center of a police station. Let's have a look:
+Well, we tried many specifications, to see if there was something we could rescue from our analysis. It turns out that if you look at prostitution, there is an important difference in where crimes are committed in relation to the center of a police station. Let's have a look:
 
-```{r Narcotics_probit3, echo=FALSE}
+```{r Prostitution_probit3, echo=FALSE}
 
-Narcotics_probit3 <- glm(
-  far ~ as.integer(per_capita_income_) + 
-    as.integer(percent_aged_16_unemployed) + 
-    as.integer(percent_households_below_poverty) + 
-    as.integer(percent_aged_25_without_high_school_diploma)+ 
-    as.integer(percent_of_housing_crowded) + 
-    as.integer(percent_aged_under_18_or_over_64) + 
-    as.factor(Narcotics), 
-  family=binomial(link="probit"), data=Crime_Data
-  )
+Prostitution_probit3 <- glm(far ~ as.integer(per_capita_income_) + as.integer(percent_aged_16_unemployed) + as.integer(percent_households_below_poverty) + as.integer(percent_aged_25_without_high_school_diploma)+ as.integer(percent_of_housing_crowded) + as.integer(percent_aged_under_18_or_over_64) + as.factor(Prostitution), family=binomial(link="probit"), data=Crime_Data)
 
-fitted3 <- with(Crime_Data, data.frame(
-  per_capita_income_=mean(as.integer(per_capita_income_)),
-  percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)),
-  percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)),
-  percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)),
-  percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)),
-  percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), 
-  Narcotics = factor(0:1))
-  )
+fitted3 <- with(Crime_Data, data.frame(per_capita_income_=mean(as.integer(per_capita_income_)), percent_aged_16_unemployed=mean(as.integer(percent_aged_16_unemployed)), percent_households_below_poverty=mean(as.integer(percent_households_below_poverty)), percent_aged_25_without_high_school_diploma=mean(as.integer(percent_aged_25_without_high_school_diploma)), percent_of_housing_crowded=mean(as.integer(percent_of_housing_crowded)), percent_aged_under_18_or_over_64=mean(as.integer(percent_aged_under_18_or_over_64)), Prostitution = factor(0:1)))
+fitted3$predicted <- predict(Prostitution_probit3, newdata = fitted3, type = 'response', interval='confidence')
 
-fitted3$predicted <- predict(Narcotics_probit3, newdata = fitted3, type = 'response', interval='confidence')
+coltable6 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Prostitution', 'predicted')
 
-## creating output (fitted)
-coltable7 <- c('PerCapitaIncome', '16+Unemployed%','HouseholdsPoverty%','25+WithoutHighSchool%', 'HousingCrowded%', 'Under18Over64%', 'Narcotics', 'predicted')
-kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable7)
-
+kable(fitted3, align = 'c', digits = 3, caption = 'Predicted Probabilities for Fitted Values', col.names=coltable6)
 ```
 
-As it can be seen, it would seem that crimes related to drugs tend to occur closer to the police district.
+As it can be seen, prostitution has a very clear behavior with respect to the location of the police station. It may very well be a consequence of clustering of the sex industries in places where there was historically less coverage of the police. 
+
+## SOME CONCLUDING REMARKS
+Based on observations of reported crimes, the location of police stations and the organizational demarcation of police power in the city of Chicago we tried to assess the spatial distribution of crime. We posed the question whether crime occurs primarily farther away from the police station and whether the borders of police districts have a statistically significant effect on the distribution of crime. Our main conclusion is that given the data and the specifics of approach used in this research, there is no systematic behavior from the criminals in relation to the police station. 
+
+We like to highlight the results that look at gambling and prostitution crimes. However, we expect for future research that we are able to use more data on the presence of police is needed to establish a reliable model on the effects of police power on the spatial distribution of crime. We think that data on patrol routes, times and perception of police presence by citizens would be required to measure the impact more accurately.
 
 
 
-**Note: An interactive version of the maps shown in website is available for download in the link provided**
+# FURTHER INFORMATION
+**-The complete document can be found in the following link:**
+[Here:](https://rawgit.com/fabianbohnenberger/CrimeMapping2/master/ResearchPaper.html)
+
+
+**-Note: An interactive version of the maps shown in website is available for download in the link provided**
+Please make a local version of the following [repository:](https://github.com/fabianbohnenberger/CrimeMapping2/tree/master)
+and run the file "crime.R"
+
 
